@@ -38,10 +38,7 @@
             "pages": [
               "api-reference/introduction"
             ],
-            "openapi": {
-              "source": "openapi.json",
-              "directory": "api-reference"
-            }
+            "openapi": "api-reference/openapi.json"
           }
         ]
       }    
