@@ -29,6 +29,21 @@
             ]
           }
         ]
+      },
+      {
+        "tab": "API Reference",
+        "groups": [
+          {
+            "group": "API Documentation",
+            "pages": [
+              "api-reference/introduction",
+              "api-reference/endpoint/create",
+              "api-reference/endpoint/delete",
+              "api-reference/endpoint/get",
+              "api-reference/endpoint/webhook"
+            ]
+          }
+        ]
       }
     ],
     "global": {
