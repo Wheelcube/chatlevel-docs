@@ -17,11 +17,11 @@
     ],
     "tags": [
       {
-        "name": "devices",
+        "name": "device",
         "description": "Operations related to managing devices."
       },
       {
-        "name": "messages",
+        "name": "message",
         "description": "Operations related to sending messages."
       }
     ],
@@ -84,16 +84,17 @@
                       "items": {
                         "type": "string",
                         "enum": [
-                          "message_received",
-                          "connection_open",
-                          "logged_out",
+                          "device.connected",
+                          "device.disconnected",
                           "qr",
-                          "qr_timeout",
-                          "message_created",
-                          "call"
+                          "qr.timeout",
+                          "message.received",
+                          "message.sent",
+                          "message.updated",
+                          "message.deleted"
                         ]
                       },
-                      "description": "Events to send to webhook (defaults to all)"
+                      "description": "Events to send to webhook (defaults to all). See webhook documentation for event payloads."
                     }
                   }
                 }
@@ -546,16 +547,17 @@
               "items": {
                 "type": "string",
                 "enum": [
-                  "message_received",
-                  "connection_open",
-                  "logged_out",
+                  "device.connected",
+                  "device.disconnected",
                   "qr",
-                  "qr_timeout",
-                  "message_created",
-                  "call"
+                  "qr.timeout",
+                  "message.received",
+                  "message.sent",
+                  "message.updated",
+                  "message.deleted"
                 ]
               },
-              "description": "Events to send to webhook"
+              "description": "Events to send to webhook. See webhook documentation for event payloads."
             },
             "messagesSent": {
               "type": "integer",
@@ -587,16 +589,17 @@
               "items": {
                 "type": "string",
                 "enum": [
-                  "message_received",
-                  "connection_open",
-                  "logged_out",
+                  "device.connected",
+                  "device.disconnected",
                   "qr",
-                  "qr_timeout",
-                  "message_created",
-                  "call"
+                  "qr.timeout",
+                  "message.received",
+                  "message.sent",
+                  "message.updated",
+                  "message.deleted"
                 ]
               },
-              "description": "Events to send to webhook"
+              "description": "Events to send to webhook. See webhook documentation for event payloads."
             }
           }
         },
