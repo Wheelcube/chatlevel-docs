@@ -1,0 +1,626 @@
+{
+    "openapi": "3.1.0",
+    "info": {
+      "title": "Chatlevel API",
+      "description": "Chatlevel is a WhatsApp web API to manage any WhatsApp account programmatically.",
+      "version": "v1.0.0"
+    },
+    "servers": [
+      {
+        "url": "https://chatlevel.io/api/v1"
+      }
+    ],
+    "security": [
+      {
+        "bearerAuth": []
+      }
+    ],
+    "tags": [
+      {
+        "name": "devices",
+        "description": "Operations related to managing devices."
+      },
+      {
+        "name": "messages",
+        "description": "Operations related to sending messages."
+      }
+    ],
+    "paths": {
+      "/devices": {
+        "get": {
+          "tags": ["devices"],
+          "summary": "list devices",
+          "description": "Retrieve a list of your devices.",
+          "operationId": "list-devices",
+          "responses": {
+            "200": {
+              "description": "A JSON array of devices",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "devices": {
+                        "type": "array",
+                        "items": {
+                          "$ref": "#/components/schemas/device"
+                        }
+                      },
+                      "status": {
+                        "$ref": "#/components/schemas/status"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "post": {
+          "tags": ["devices"],
+          "summary": "create device",
+          "description": "Create a new device instance",
+          "operationId": "create-device",
+          "requestBody": {
+            "required": false,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string",
+                      "minLength": 1,
+                      "maxLength": 20,
+                      "description": "User-friendly device name"
+                    },
+                    "webhookUrl": {
+                      "type": "string",
+                      "format": "uri",
+                      "description": "Webhook URL for receiving events"
+                    },
+                    "webhookEvents": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "enum": [
+                          "message_received",
+                          "connection_open",
+                          "logged_out",
+                          "qr",
+                          "qr_timeout",
+                          "message_created",
+                          "call"
+                        ]
+                      },
+                      "description": "Events to send to webhook (defaults to all)"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Device created successfully",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "device": {
+                        "$ref": "#/components/schemas/device"
+                      },
+                      "status": {
+                        "$ref": "#/components/schemas/status"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/devices/{id}": {
+        "get": {
+          "tags": ["devices"],
+          "summary": "retrieve device",
+          "description": "Retrieve a single device by its ID",
+          "operationId": "retrieve-device",
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "description": "Device ID",
+              "required": true,
+              "schema": {
+                "type": "integer",
+                "minimum": 1,
+                "description": "Numeric device identifier"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Device details",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "device": {
+                        "$ref": "#/components/schemas/device"
+                      },
+                      "status": {
+                        "$ref": "#/components/schemas/status"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "put": {
+          "tags": ["devices"],
+          "summary": "update device",
+          "description": "Update the device configuration",
+          "operationId": "update-device",
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "description": "Device ID",
+              "required": true,
+              "schema": {
+                "type": "integer",
+                "minimum": 1,
+                "description": "Numeric device identifier"
+              }
+            }
+          ],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/deviceUpdate"
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Device updated successfully",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "device": {
+                        "$ref": "#/components/schemas/device"
+                      },
+                      "status": {
+                        "$ref": "#/components/schemas/status"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "delete": {
+          "tags": ["devices"],
+          "summary": "delete device",
+          "description": "Delete a device by ID",
+          "operationId": "delete-device",
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "description": "Device ID",
+              "required": true,
+              "schema": {
+                "type": "integer",
+                "minimum": 1,
+                "description": "Numeric device identifier"
+              }
+            }
+          ],
+          "responses": {
+            "204": {
+              "description": "Device deleted successfully"
+            }
+          }
+        }
+      },
+      "/devices/{id}/disconnect": {
+        "post": {
+          "tags": ["devices"],
+          "summary": "disconnect device",
+          "description": "Disconnect a device from WhatsApp",
+          "operationId": "disconnect-device",
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "description": "Device ID",
+              "required": true,
+              "schema": {
+                "type": "integer",
+                "minimum": 1,
+                "description": "Numeric device identifier"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Device disconnected successfully",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "status": {
+                        "$ref": "#/components/schemas/status"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+            ,
+            "404": {
+              "description": "Device not connected or not found",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "status": {
+                        "$ref": "#/components/schemas/status"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "500": {
+              "description": "Failed to disconnect device",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "status": {
+                        "$ref": "#/components/schemas/status"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/devices/{id}/restart": {
+        "post": {
+          "tags": ["devices"],
+          "summary": "restart device",
+          "description": "Close any open socket (without logout) and start a new session. Returns only status information.",
+          "operationId": "restart-device",
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "description": "Device ID",
+              "required": true,
+              "schema": {
+                "type": "integer",
+                "minimum": 1,
+                "description": "Numeric device identifier"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Device restarted successfully",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "status": {
+                        "$ref": "#/components/schemas/status"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "404": {
+              "description": "Device not found",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "status": {
+                        "$ref": "#/components/schemas/status"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "500": {
+              "description": "Failed to restart device",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "status": {
+                        "$ref": "#/components/schemas/status"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/devices/{id}/messages/text": {
+        "post": {
+          "tags": ["messages"],
+          "summary": "send text message",
+          "description": "Send a text message to a chat",
+          "operationId": "send-text-message",
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "description": "Device ID",
+              "required": true,
+              "schema": {
+                "type": "integer",
+                "minimum": 1,
+                "description": "Numeric device identifier"
+              }
+            }
+          ],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["toNumber", "message"],
+                  "properties": {
+                    "toNumber": {
+                      "type": "string",
+                      "minLength": 8,
+                      "maxLength": 15,
+                      "pattern": "^\\d+$",
+                      "description": "WhatsApp phone number (digits only)",
+                      "example": "31620292537"
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "Text message to send"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Message sent successfully",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "status": {
+                        "type": "string"
+                      },
+                      "messageId": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/devices/{id}/messages/media": {
+        "post": {
+          "tags": ["messages"],
+          "summary": "send media message",
+          "description": "Send a media message (image, video, audio, document)",
+          "operationId": "send-media-message",
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "description": "Device ID",
+              "required": true,
+              "schema": {
+                "type": "integer",
+                "minimum": 1,
+                "description": "Numeric device identifier"
+              }
+            }
+          ],
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["toNumber"],
+                  "properties": {
+                    "toNumber": {
+                      "type": "string",
+                      "minLength": 8,
+                      "maxLength": 15,
+                      "pattern": "^\\d+$",
+                      "description": "WhatsApp phone number (digits only)",
+                      "example": "31620292537"
+                    },
+                    "mediaUrl": {
+                      "type": "string",
+                      "description": "URL of the media file"
+                    },
+                    "mediaBase64": {
+                      "type": "string",
+                      "description": "Base64 encoded media content"
+                    },
+                    "mediaCaption": {
+                      "type": "string",
+                      "description": "Optional caption for the media"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Media message sent successfully",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "status": {
+                        "type": "string"
+                      },
+                      "messageId": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "components": {
+      "schemas": {
+        "device": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "integer",
+              "description": "Unique identifier for the device"
+            },
+            "name": {
+              "type": "string",
+              "description": "Name of the device"
+            },
+            "status": {
+              "type": "string",
+              "enum": ["connected", "qr", "timeout"],
+              "description": "Current connection status: 'qr' when waiting for QR scan, 'connected' when paired, 'timeout' when QR expired"
+            },
+            "qr": {
+              "type": "string",
+              "nullable": true,
+              "description": "Base64 encoded QR code data URL (available when status is 'qr')"
+            },
+            "webhookUrl": {
+              "type": "string",
+              "nullable": true,
+              "description": "Webhook URL for receiving events"
+            },
+            "webhookEvents": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "message_received",
+                  "connection_open",
+                  "logged_out",
+                  "qr",
+                  "qr_timeout",
+                  "message_created",
+                  "call"
+                ]
+              },
+              "description": "Events to send to webhook"
+            },
+            "messagesSent": {
+              "type": "integer",
+              "description": "Total number of messages sent"
+            },
+            "createdAt": {
+              "type": "string",
+              "format": "date-time",
+              "description": "When the device was created"
+            }
+          }
+        },
+        "deviceUpdate": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 20,
+              "description": "New name for the device"
+            },
+            "webhookUrl": {
+              "type": "string",
+              "nullable": true,
+              "description": "Webhook URL for receiving events (null to disable)"
+            },
+            "webhookEvents": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "message_received",
+                  "connection_open",
+                  "logged_out",
+                  "qr",
+                  "qr_timeout",
+                  "message_created",
+                  "call"
+                ]
+              },
+              "description": "Events to send to webhook"
+            }
+          }
+        },
+        "status": {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "integer",
+              "description": "Status code"
+            },
+            "message": {
+              "type": "string",
+              "description": "Status message"
+            }
+          }
+        }
+      },
+      "securitySchemes": {
+        "bearerAuth": {
+          "type": "http",
+          "scheme": "bearer",
+          "description": "API key authentication. Provide your API key as: Authorization: Bearer <api_key>. Alternative: X-API-Key: <api_key> header."
+        }
+      }
+    }
+  }
