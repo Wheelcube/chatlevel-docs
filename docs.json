@@ -38,6 +38,17 @@
             ]
           },
           {
+            "group": "Webhooks",
+            "pages": [
+              "webhooks/introduction",
+              "webhooks/message-events",
+              "webhooks/text-messages",
+              "webhooks/media-messages",
+              "webhooks/interactive-messages",
+              "webhooks/special-messages"
+            ]
+          },
+          {
             "group": "AI tools",
             "pages": [
               "ai-tools/cursor",
