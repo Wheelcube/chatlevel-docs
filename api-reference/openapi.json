@@ -17,11 +17,11 @@
     ],
     "tags": [
       {
-        "name": "device",
+        "name": "devices",
         "description": "Operations related to managing devices."
       },
       {
-        "name": "message",
+        "name": "messages",
         "description": "Operations related to sending messages."
       }
     ],
@@ -514,6 +514,176 @@
         }
       }
     },
+    "webhooks": {
+      "device.connected": {
+        "post": {
+          "summary": "Device Connected",
+          "description": "Triggered when a WhatsApp device successfully connects and authenticates",
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/deviceConnectedWebhook"
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Webhook received successfully"
+            }
+          }
+        }
+      },
+      "device.disconnected": {
+        "post": {
+          "summary": "Device Disconnected",
+          "description": "Triggered when a WhatsApp device disconnects from the server",
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/deviceDisconnectedWebhook"
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Webhook received successfully"
+            }
+          }
+        }
+      },
+      "qr": {
+        "post": {
+          "summary": "QR Code Generated",
+          "description": "Triggered when a QR code is generated for device pairing",
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/qrWebhook"
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Webhook received successfully"
+            }
+          }
+        }
+      },
+      "qr.timeout": {
+        "post": {
+          "summary": "QR Code Timeout",
+          "description": "Triggered when QR code scanning times out without successful pairing",
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/qrTimeoutWebhook"
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Webhook received successfully"
+            }
+          }
+        }
+      },
+      "message.received": {
+        "post": {
+          "summary": "Message Received",
+          "description": "Triggered when a new message is received by the WhatsApp instance",
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/messageReceivedWebhook"
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Webhook received successfully"
+            }
+          }
+        }
+      },
+      "message.sent": {
+        "post": {
+          "summary": "Message Sent",
+          "description": "Triggered when a message is sent from the WhatsApp instance",
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/messageSentWebhook"
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Webhook received successfully"
+            }
+          }
+        }
+      },
+      "message.updated": {
+        "post": {
+          "summary": "Message Updated",
+          "description": "Triggered when a message status is updated (e.g., delivered, read)",
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/messageUpdatedWebhook"
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Webhook received successfully"
+            }
+          }
+        }
+      },
+      "message.deleted": {
+        "post": {
+          "summary": "Message Deleted",
+          "description": "Triggered when a message is deleted",
+          "requestBody": {
+            "required": true,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/messageDeletedWebhook"
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Webhook received successfully"
+            }
+          }
+        }
+      }
+    },
     "components": {
       "schemas": {
         "device": {
@@ -613,6 +783,283 @@
             "message": {
               "type": "string",
               "description": "Status message"
+            }
+          }
+        },
+        "deviceConnectedWebhook": {
+          "type": "object",
+          "required": ["event", "instanceId", "data", "timestamp"],
+          "properties": {
+            "event": {
+              "type": "string",
+              "enum": ["device.connected"],
+              "description": "Event type"
+            },
+            "instanceId": {
+              "type": "string",
+              "description": "Device instance ID"
+            },
+            "data": {
+              "type": "object",
+              "properties": {
+                "displayName": {
+                  "type": "string",
+                  "description": "WhatsApp account display name"
+                },
+                "phoneNumber": {
+                  "type": "string",
+                  "description": "WhatsApp phone number with country code"
+                }
+              }
+            },
+            "timestamp": {
+              "type": "string",
+              "format": "date-time",
+              "description": "Event timestamp in ISO 8601 format"
+            }
+          }
+        },
+        "deviceDisconnectedWebhook": {
+          "type": "object",
+          "required": ["event", "instanceId", "data", "timestamp"],
+          "properties": {
+            "event": {
+              "type": "string",
+              "enum": ["device.disconnected"]
+            },
+            "instanceId": {
+              "type": "string"
+            },
+            "data": {
+              "type": "object",
+              "properties": {
+                "reason": {
+                  "type": "string",
+                  "enum": ["logged_out", "qr_timeout", "temporary_disconnect", "unknown_disconnect"],
+                  "description": "Disconnect reason"
+                }
+              }
+            },
+            "timestamp": {
+              "type": "string",
+              "format": "date-time"
+            }
+          }
+        },
+        "qrWebhook": {
+          "type": "object",
+          "required": ["event", "instanceId", "data", "timestamp"],
+          "properties": {
+            "event": {
+              "type": "string",
+              "enum": ["qr"]
+            },
+            "instanceId": {
+              "type": "string"
+            },
+            "data": {
+              "type": "object",
+              "properties": {
+                "qrCode": {
+                  "type": "string",
+                  "description": "Base64 encoded QR code data URL (data:image/png;base64,...)"
+                }
+              }
+            },
+            "timestamp": {
+              "type": "string",
+              "format": "date-time"
+            }
+          }
+        },
+        "qrTimeoutWebhook": {
+          "type": "object",
+          "required": ["event", "instanceId", "data", "timestamp"],
+          "properties": {
+            "event": {
+              "type": "string",
+              "enum": ["qr.timeout"]
+            },
+            "instanceId": {
+              "type": "string"
+            },
+            "data": {
+              "type": "object",
+              "description": "Empty object"
+            },
+            "timestamp": {
+              "type": "string",
+              "format": "date-time"
+            }
+          }
+        },
+        "messageReceivedWebhook": {
+          "type": "object",
+          "required": ["event", "instanceId", "data", "timestamp"],
+          "properties": {
+            "event": {
+              "type": "string",
+              "enum": ["message.received"]
+            },
+            "instanceId": {
+              "type": "string"
+            },
+            "data": {
+              "type": "object",
+              "properties": {
+                "messages": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "description": "Message ID"
+                      },
+                      "from": {
+                        "type": "string",
+                        "description": "Sender JID (e.g., 1234567890@s.whatsapp.net)"
+                      },
+                      "content": {
+                        "type": "string",
+                        "description": "Message content or description"
+                      },
+                      "type": {
+                        "type": "string",
+                        "enum": ["text", "image", "video", "audio", "document", "sticker", "contact", "location", "poll", "list", "buttons", "unknown"],
+                        "description": "Message type"
+                      },
+                      "timestamp": {
+                        "type": "integer",
+                        "description": "Unix timestamp"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "timestamp": {
+              "type": "string",
+              "format": "date-time"
+            }
+          }
+        },
+        "messageSentWebhook": {
+          "type": "object",
+          "required": ["event", "instanceId", "data", "timestamp"],
+          "properties": {
+            "event": {
+              "type": "string",
+              "enum": ["message.sent"]
+            },
+            "instanceId": {
+              "type": "string"
+            },
+            "data": {
+              "type": "object",
+              "properties": {
+                "messages": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "to": {
+                        "type": "string",
+                        "description": "Recipient JID"
+                      },
+                      "content": {
+                        "type": "string"
+                      },
+                      "type": {
+                        "type": "string",
+                        "enum": ["text", "image", "video", "audio", "document", "sticker", "contact", "location", "poll", "list", "buttons", "unknown"]
+                      },
+                      "timestamp": {
+                        "type": "integer"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "timestamp": {
+              "type": "string",
+              "format": "date-time"
+            }
+          }
+        },
+        "messageUpdatedWebhook": {
+          "type": "object",
+          "required": ["event", "instanceId", "data", "timestamp"],
+          "properties": {
+            "event": {
+              "type": "string",
+              "enum": ["message.updated"]
+            },
+            "instanceId": {
+              "type": "string"
+            },
+            "data": {
+              "type": "object",
+              "properties": {
+                "messageId": {
+                  "type": "string"
+                },
+                "from": {
+                  "type": "string"
+                },
+                "update": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "enum": ["pending", "server_ack", "delivered", "read", "played"],
+                      "description": "Message status"
+                    }
+                  }
+                },
+                "timestamp": {
+                  "type": "integer"
+                }
+              }
+            },
+            "timestamp": {
+              "type": "string",
+              "format": "date-time"
+            }
+          }
+        },
+        "messageDeletedWebhook": {
+          "type": "object",
+          "required": ["event", "instanceId", "data", "timestamp"],
+          "properties": {
+            "event": {
+              "type": "string",
+              "enum": ["message.deleted"]
+            },
+            "instanceId": {
+              "type": "string"
+            },
+            "data": {
+              "type": "object",
+              "properties": {
+                "messageId": {
+                  "type": "string"
+                },
+                "from": {
+                  "type": "string"
+                },
+                "timestamp": {
+                  "type": "integer"
+                }
+              }
+            },
+            "timestamp": {
+              "type": "string",
+              "format": "date-time"
             }
           }
         }
