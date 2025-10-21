@@ -1,0 +1,178 @@
+---
+title: "Event Types"
+description: "List of supported event types and their payloads"
+---
+
+## device.connected
+
+A WhatsApp device successfully connected and authenticated.
+
+<AccordionGroup>
+  <Accordion title="Sample Request Body">
+    ```json
+    {
+      "event": "device.connected",
+      "instanceId": "1234567",
+      "data": {
+        "displayName": "John Doe",
+        "phoneNumber": "+1234567890"
+      },
+      "timestamp": "2024-01-15T10:30:00.000Z"
+    }
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## device.disconnected
+
+A WhatsApp device disconnected from the server.
+
+<AccordionGroup>
+  <Accordion title="Sample Request Body">
+    ```json
+    {
+      "event": "device.disconnected",
+      "instanceId": "1234567",
+      "data": {
+        "reason": "logged_out"
+      },
+      "timestamp": "2024-01-15T10:35:00.000Z"
+    }
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## qr
+
+A QR code was generated for device pairing.
+
+<AccordionGroup>
+  <Accordion title="Sample Request Body">
+    ```json
+    {
+      "event": "qr",
+      "instanceId": "1234567",
+      "data": {
+        "qrCode": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAA..."
+      },
+      "timestamp": "2024-01-15T10:25:00.000Z"
+    }
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## qr.timeout
+
+QR code scanning timed out without successful pairing.
+
+<AccordionGroup>
+  <Accordion title="Sample Request Body">
+    ```json
+    {
+      "event": "qr.timeout",
+      "instanceId": "1234567",
+      "data": {},
+      "timestamp": "2024-01-15T10:27:00.000Z"
+    }
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## message.received
+
+A new message was received by the WhatsApp instance.
+
+<AccordionGroup>
+  <Accordion title="Sample Request Body">
+    ```json
+    {
+      "event": "message.received",
+      "instanceId": "1234567",
+      "data": {
+        "messages": [
+          {
+            "id": "3EB0B430B6F8F1D0E053AC120E0A9E5C",
+            "from": "1234567890@s.whatsapp.net",
+            "content": "Hello, how are you?",
+            "type": "text",
+            "timestamp": 1705315800
+          }
+        ]
+      },
+      "timestamp": "2024-01-15T10:30:00.000Z"
+    }
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## message.sent
+
+A message was sent from the WhatsApp instance.
+
+<AccordionGroup>
+  <Accordion title="Sample Request Body">
+    ```json
+    {
+      "event": "message.sent",
+      "instanceId": "1234567",
+      "data": {
+        "messages": [
+          {
+            "id": "3EB0B430B6F8F1D0E053AC120E0A9E5D",
+            "to": "9876543210@s.whatsapp.net",
+            "content": "Thanks for reaching out!",
+            "type": "text",
+            "timestamp": 1705315900
+          }
+        ]
+      },
+      "timestamp": "2024-01-15T10:31:40.000Z"
+    }
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## message.updated
+
+A message status was updated (e.g., delivered, read, reaction added).
+
+<AccordionGroup>
+  <Accordion title="Sample Request Body">
+    ```json
+    {
+      "event": "message.updated",
+      "instanceId": "1234567",
+      "data": {
+        "messageId": "3EB0B430B6F8F1D0E053AC120E0A9E5C",
+        "from": "1234567890@s.whatsapp.net",
+        "update": {
+          "status": "read"
+        },
+        "timestamp": 1705316000
+      },
+      "timestamp": "2024-01-15T10:33:20.000Z"
+    }
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## message.deleted
+
+A message was deleted.
+
+<AccordionGroup>
+  <Accordion title="Sample Request Body">
+    ```json
+    {
+      "event": "message.deleted",
+      "instanceId": "1234567",
+      "data": {
+        "messageId": "3EB0B430B6F8F1D0E053AC120E0A9E5C",
+        "from": "1234567890@s.whatsapp.net",
+        "timestamp": 1705316100
+      },
+      "timestamp": "2024-01-15T10:35:00.000Z"
+    }
+    ```
+  </Accordion>
+</AccordionGroup>
