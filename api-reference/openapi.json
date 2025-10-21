@@ -270,8 +270,7 @@
                   }
                 }
               }
-            }
-            ,
+            },
             "404": {
               "description": "Device not connected or not found",
               "content": {
