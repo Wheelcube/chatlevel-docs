@@ -12,7 +12,7 @@ A WhatsApp device successfully connected and authenticated.
     ```json
     {
       "event": "device.connected",
-      "instanceId": "1234567",
+      "deviceId": 1234567,
       "data": {
         "displayName": "John Doe",
         "phoneNumber": "+1234567890"
@@ -32,7 +32,7 @@ A WhatsApp device disconnected from the server.
     ```json
     {
       "event": "device.disconnected",
-      "instanceId": "1234567",
+      "deviceId": 1234567,
       "data": {
         "reason": "logged_out"
       },
@@ -51,7 +51,7 @@ A QR code was generated for device pairing.
     ```json
     {
       "event": "qr",
-      "instanceId": "1234567",
+      "deviceId": 1234567,
       "data": {
         "qrCode": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAA..."
       },
@@ -70,7 +70,7 @@ QR code scanning timed out without successful pairing.
     ```json
     {
       "event": "qr.timeout",
-      "instanceId": "1234567",
+      "deviceId": 1234567,
       "data": {},
       "timestamp": "2024-01-15T10:27:00.000Z"
     }
@@ -87,7 +87,7 @@ A new message was received by the WhatsApp instance.
     ```json
     {
       "event": "message.received",
-      "instanceId": "1234567",
+      "deviceId": 1234567,
       "data": {
         "messages": [
           {
@@ -114,7 +114,7 @@ A message was sent from the WhatsApp instance.
     ```json
     {
       "event": "message.sent",
-      "instanceId": "1234567",
+      "deviceId": 1234567,
       "data": {
         "messages": [
           {
@@ -141,7 +141,7 @@ A message status was updated (e.g., delivered, read, reaction added).
     ```json
     {
       "event": "message.updated",
-      "instanceId": "1234567",
+      "deviceId": 1234567,
       "data": {
         "messageId": "3EB0B430B6F8F1D0E053AC120E0A9E5C",
         "from": "1234567890@s.whatsapp.net",
@@ -165,7 +165,7 @@ A message was deleted.
     ```json
     {
       "event": "message.deleted",
-      "instanceId": "1234567",
+      "deviceId": 1234567,
       "data": {
         "messageId": "3EB0B430B6F8F1D0E053AC120E0A9E5C",
         "from": "1234567890@s.whatsapp.net",
