@@ -3,7 +3,7 @@ title: "Event Types"
 description: "List of supported event types and their payloads"
 ---
 
-## device.connected
+## connection.open
 
 A WhatsApp device successfully connected and authenticated.
 
@@ -11,7 +11,7 @@ A WhatsApp device successfully connected and authenticated.
   <Accordion title="Sample Request Body">
     ```json
     {
-      "event": "device.connected",
+      "event": "connection.open",
       "deviceId": 1234567,
       "data": {
         "displayName": "John Doe",
@@ -23,7 +23,7 @@ A WhatsApp device successfully connected and authenticated.
   </Accordion>
 </AccordionGroup>
 
-## device.disconnected
+## connection.closed
 
 A WhatsApp device disconnected from the server.
 
@@ -31,18 +31,16 @@ A WhatsApp device disconnected from the server.
   <Accordion title="Sample Request Body">
     ```json
     {
-      "event": "device.disconnected",
+      "event": "connection.closed",
       "deviceId": 1234567,
-      "data": {
-        "reason": "logged_out"
-      },
+      "data": {},
       "timestamp": "2024-01-15T10:35:00.000Z"
     }
     ```
   </Accordion>
 </AccordionGroup>
 
-## qr
+## connection.qr
 
 A QR code was generated for device pairing.
 
@@ -50,7 +48,7 @@ A QR code was generated for device pairing.
   <Accordion title="Sample Request Body">
     ```json
     {
-      "event": "qr",
+      "event": "connection.qr",
       "deviceId": 1234567,
       "data": {
         "qrCode": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAA..."
@@ -61,7 +59,7 @@ A QR code was generated for device pairing.
   </Accordion>
 </AccordionGroup>
 
-## qr.timeout
+## connection.qr.timeout
 
 QR code scanning timed out without successful pairing.
 
@@ -69,10 +67,27 @@ QR code scanning timed out without successful pairing.
   <Accordion title="Sample Request Body">
     ```json
     {
-      "event": "qr.timeout",
+      "event": "connection.qr.timeout",
       "deviceId": 1234567,
       "data": {},
       "timestamp": "2024-01-15T10:27:00.000Z"
+    }
+    ```
+  </Accordion>
+</AccordionGroup>
+
+## connection.logout
+
+A connection closed by logout
+
+<AccordionGroup>
+  <Accordion title="Sample Request Body">
+    ```json
+    {
+      "event": "connection.logout",
+      "deviceId": 1234567,
+      "data": {},
+      "timestamp": "2024-01-15T10:35:00.000Z"
     }
     ```
   </Accordion>
@@ -87,19 +102,17 @@ A new message was received by the WhatsApp instance.
     ```json
     {
       "event": "message.received",
-      "deviceId": 1234567,
+      "deviceId": 1909568,
       "data": {
-        "messages": [
-          {
-            "id": "3EB0B430B6F8F1D0E053AC120E0A9E5C",
-            "from": "1234567890@s.whatsapp.net",
-            "content": "Hello, how are you?",
-            "type": "text",
-            "timestamp": 1705315800
-          }
-        ]
+        "id": "3EB0C7F8A5B2D4E6F9A1C3D5",
+        "from": "1234567890",
+        "pushName": "John Doe",
+        "content": {
+          "text": "Hello world"
+        },
+        "type": "text"
       },
-      "timestamp": "2024-01-15T10:30:00.000Z"
+      "timestamp": "2025-10-23T10:53:48.552Z"
     }
     ```
   </Accordion>
@@ -107,7 +120,7 @@ A new message was received by the WhatsApp instance.
 
 ## message.sent
 
-A message was sent from the WhatsApp instance.
+A message was sent from the WhatsApp device.
 
 <AccordionGroup>
   <Accordion title="Sample Request Body">
@@ -116,17 +129,14 @@ A message was sent from the WhatsApp instance.
       "event": "message.sent",
       "deviceId": 1234567,
       "data": {
-        "messages": [
-          {
-            "id": "3EB0B430B6F8F1D0E053AC120E0A9E5D",
-            "to": "9876543210@s.whatsapp.net",
-            "content": "Thanks for reaching out!",
-            "type": "text",
-            "timestamp": 1705315900
-          }
-        ]
+        "id": "3EB0C7F8A5B2D4E6F9A1C3D6",
+        "to": "0987654321",
+        "content": {
+          "text": "Thanks for reaching out!"
+        },
+        "type": "text"
       },
-      "timestamp": "2024-01-15T10:31:40.000Z"
+      "timestamp": "2024-01-15T10:41:00.000Z"
     }
     ```
   </Accordion>
@@ -134,7 +144,7 @@ A message was sent from the WhatsApp instance.
 
 ## message.updated
 
-A message status was updated (e.g., delivered, read, reaction added).
+A message was edited.
 
 <AccordionGroup>
   <Accordion title="Sample Request Body">
@@ -143,14 +153,17 @@ A message status was updated (e.g., delivered, read, reaction added).
       "event": "message.updated",
       "deviceId": 1234567,
       "data": {
-        "messageId": "3EB0B430B6F8F1D0E053AC120E0A9E5C",
-        "from": "1234567890@s.whatsapp.net",
+        "messageId": "3EB0C7F8A5B2D4E6F9A1C3D6",
+        "from": "0987654321",
+        "fromMe": true,
         "update": {
-          "status": "read"
-        },
-        "timestamp": 1705316000
+          "editedContent": {
+            "text": "Edited text content"
+          },
+          "messageType": "text"
+        }
       },
-      "timestamp": "2024-01-15T10:33:20.000Z"
+      "timestamp": "2024-01-15T10:42:00.000Z"
     }
     ```
   </Accordion>
@@ -165,13 +178,13 @@ A message was deleted.
     ```json
     {
       "event": "message.deleted",
-      "deviceId": 1234567,
+      "deviceId": 1909568,
       "data": {
-        "messageId": "3EB0B430B6F8F1D0E053AC120E0A9E5C",
-        "from": "1234567890@s.whatsapp.net",
-        "timestamp": 1705316100
+        "messageId": "3EB0C7F8A5B2D4E6F9A1C3D6",
+        "from": "0987654321",
+        "fromMe": false
       },
-      "timestamp": "2024-01-15T10:35:00.000Z"
+      "timestamp": "2025-10-22T21:55:44.332Z"
     }
     ```
   </Accordion>
