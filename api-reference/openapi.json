@@ -7,7 +7,7 @@
     },
     "servers": [
       {
-        "url": "https://chatlevel.io/api/v1"
+        "url": "https://api.chatlevel.io/v1"
       }
     ],
     "security": [
@@ -59,7 +59,7 @@
         "post": {
           "tags": ["devices"],
           "summary": "create device",
-          "description": "Create a new device instance",
+          "description": "Create a new device device",
           "operationId": "create-device",
           "requestBody": {
             "required": false,
@@ -95,6 +95,12 @@
                         ]
                       },
                       "description": "Events to send to webhook (defaults to all). See webhook documentation for event payloads."
+                    },
+                    "phoneNumber": {
+                      "type": "string",
+                      "pattern": "^\\d{8,15}$",
+                      "description": "Phone number for pairing code authentication (alternative to QR code). Must be digits only, include country code, no + or spaces.",
+                      "example": "31612345678"
                     }
                   }
                 }
@@ -114,6 +120,31 @@
                       },
                       "status": {
                         "$ref": "#/components/schemas/status"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "403": {
+              "description": "Device limit reached - subscription does not allow creating more devices",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "status": {
+                        "type": "object",
+                        "properties": {
+                          "code": {
+                            "type": "integer",
+                            "example": 403
+                          },
+                          "message": {
+                            "type": "string",
+                            "example": "Device limit reached. You have 2 active device(s) and your subscription allows 2."
+                          }
+                        }
                       }
                     }
                   }
@@ -309,7 +340,7 @@
         "post": {
           "tags": ["devices"],
           "summary": "restart device",
-          "description": "Close any open socket (without logout) and start a new session. Returns only status information.",
+          "description": "Close any open socket (without logout) and start a new session. Optionally provide a phone number to receive a pairing code instead of QR.",
           "operationId": "restart-device",
           "parameters": [
             {
@@ -324,6 +355,24 @@
               }
             }
           ],
+          "requestBody": {
+            "required": false,
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "phoneNumber": {
+                      "type": "string",
+                      "pattern": "^\\d{8,15}$",
+                      "description": "Phone number for pairing code authentication (alternative to QR code). Must be digits only, include country code.",
+                      "example": "31612345678"
+                    }
+                  }
+                }
+              }
+            }
+          },
           "responses": {
             "200": {
               "description": "Device restarted successfully",
@@ -563,6 +612,11 @@
               "type": "integer",
               "description": "Total number of messages sent"
             },
+            "subscription_status": {
+              "type": "string",
+              "enum": ["active", "inactive"],
+              "description": "Subscription status of the device. Inactive devices have their WhatsApp sessions stopped."
+            },
             "createdAt": {
               "type": "string",
               "format": "date-time",
@@ -600,6 +654,11 @@
                 ]
               },
               "description": "Events to send to webhook. See webhook documentation for event payloads."
+            },
+            "subscription_status": {
+              "type": "string",
+              "enum": ["active", "inactive"],
+              "description": "Subscription status. When set to 'inactive', the WhatsApp session is stopped but auth data is preserved for reactivation. When set to 'active', the session is restarted."
             }
           }
         },
