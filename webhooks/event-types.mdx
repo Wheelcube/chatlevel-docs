@@ -40,18 +40,19 @@ A WhatsApp device disconnected from the server.
   </Accordion>
 </AccordionGroup>
 
-## connection.qr
+## connection.auth
 
-A QR code was generated for device pairing.
+A QR or Pairing code was generated for device pairing. Can either contain qrCode or pairingCode.
 
 <AccordionGroup>
   <Accordion title="Sample Request Body">
     ```json
     {
-      "event": "connection.qr",
+      "event": "connection.auth",
       "deviceId": 1234567,
       "data": {
-        "qrCode": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAA..."
+        "qrCode": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAA...",
+    	"pairingCode": "ABCD1234"
       },
       "timestamp": "2024-01-15T10:25:00.000Z"
     }
@@ -59,15 +60,15 @@ A QR code was generated for device pairing.
   </Accordion>
 </AccordionGroup>
 
-## connection.qr.timeout
+## connection.timeout
 
-QR code scanning timed out without successful pairing.
+QR or Pairing code timed out without successful pairing.
 
 <AccordionGroup>
   <Accordion title="Sample Request Body">
     ```json
     {
-      "event": "connection.qr.timeout",
+      "event": "connection.timeout",
       "deviceId": 1234567,
       "data": {},
       "timestamp": "2024-01-15T10:27:00.000Z"
