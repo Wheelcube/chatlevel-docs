@@ -5,7 +5,7 @@ description: "Use webhooks to notify your application about WhatsApp events"
 
 ## What is a webhook?
 
-We use webhooks to push real-time notifications to you about your WhatsApp instances. All webhooks use HTTPS and deliver a JSON payload that can be used by your application. You can use webhook feeds to do things like:
+We use webhooks to push real-time notifications to you about your WhatsApp devices. All webhooks use HTTPS and deliver a JSON payload that can be used by your application. You can use webhook feeds to do things like:
 
 - Process incoming messages and send automated responses
 - Track when a device connects or disconnects
@@ -16,13 +16,12 @@ In case webhooks are not successfully received by your endpoint, we automaticall
 
 ## Steps to receive a webhook
 
-You can start receiving real-time events in your app using the steps:
+You can start receiving real-time events in your app using the steps below:
 
 - Create a local endpoint to receive requests
-- Register your development webhook endpoint on the dashboard
-- Test that your webhook endpoint is working properly using the test environment
+- Register your development webhook endpoint in the Chatlevel app
+- Test that your webhook endpoint is working
 - Deploy your webhook endpoint to production
-- Register your production webhook endpoint on the live dashboard
 
 ### 1. Create a local endpoint to receive requests
 
@@ -46,7 +45,7 @@ On receiving an event, you should respond with an HTTP 200 OK to signal that the
 
 ### 2. Register your development webhook endpoint
 
-Register your publicly accessible HTTPS URL in the dashboard.
+Register your publicly accessible HTTPS URL in the Chatlevel app.
 
 <Tip>
   You can create a tunnel to your localhost server using a tool like ngrok. For example: https://8733-191-204-177-89.sa.ngrok.io/api/webhooks
@@ -54,7 +53,7 @@ Register your publicly accessible HTTPS URL in the dashboard.
 
 ### 3. Test that your webhook endpoint is working properly
 
-Create a few test instances and trigger events to check that your webhook endpoint is receiving them correctly.
+Create a few test trigger events for your connected device to check that your webhook endpoint is receiving events correctly.
 
 ### 4. Deploy your webhook endpoint
 
