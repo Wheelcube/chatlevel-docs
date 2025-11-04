@@ -17,8 +17,13 @@
             "group": "Getting started",
             "pages": [
               "introduction",
-              "quickstart",
-              "development"
+              "quickstart"
+            ]
+          },
+          {
+            "group": "Integrations",
+            "pages": [
+              "integrations/highlevel"
             ]
           },
           {
