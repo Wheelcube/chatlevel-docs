@@ -53,6 +53,18 @@
                   }
                 }
               }
+            },
+            "401": {
+              "$ref": "#/components/responses/401Unauthorized"
+            },
+            "408": {
+              "$ref": "#/components/responses/408Timeout"
+            },
+            "429": {
+              "$ref": "#/components/responses/429RateLimit"
+            },
+            "500": {
+              "$ref": "#/components/responses/500InternalError"
             }
           }
         },
@@ -84,14 +96,16 @@
                       "items": {
                         "type": "string",
                         "enum": [
-                          "device.connected",
-                          "device.disconnected",
-                          "qr",
-                          "qr.timeout",
+                          "connection.open",
+                          "connection.closed",
+                          "connection.auth",
+                          "connection.timeout",
+                          "connection.logout",
                           "message.received",
                           "message.sent",
                           "message.updated",
-                          "message.deleted"
+                          "message.deleted",
+                          "call"
                         ]
                       },
                       "description": "Events to send to webhook (defaults to all). See webhook documentation for event payloads."
@@ -126,6 +140,12 @@
                 }
               }
             },
+            "400": {
+              "$ref": "#/components/responses/400InvalidJSON"
+            },
+            "401": {
+              "$ref": "#/components/responses/401Unauthorized"
+            },
             "403": {
               "description": "Device limit reached - subscription does not allow creating more devices",
               "content": {
@@ -150,6 +170,18 @@
                   }
                 }
               }
+            },
+            "408": {
+              "$ref": "#/components/responses/408Timeout"
+            },
+            "413": {
+              "$ref": "#/components/responses/413PayloadTooLarge"
+            },
+            "429": {
+              "$ref": "#/components/responses/429RateLimit"
+            },
+            "500": {
+              "$ref": "#/components/responses/500InternalError"
             }
           }
         }
@@ -191,6 +223,33 @@
                   }
                 }
               }
+            },
+            "401": {
+              "$ref": "#/components/responses/401Unauthorized"
+            },
+            "404": {
+              "description": "Device not found",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "status": {
+                        "$ref": "#/components/schemas/status"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "408": {
+              "$ref": "#/components/responses/408Timeout"
+            },
+            "429": {
+              "$ref": "#/components/responses/429RateLimit"
+            },
+            "500": {
+              "$ref": "#/components/responses/500InternalError"
             }
           }
         },
@@ -240,6 +299,39 @@
                   }
                 }
               }
+            },
+            "400": {
+              "$ref": "#/components/responses/400InvalidJSON"
+            },
+            "401": {
+              "$ref": "#/components/responses/401Unauthorized"
+            },
+            "404": {
+              "description": "Device not found",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "status": {
+                        "$ref": "#/components/schemas/status"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "408": {
+              "$ref": "#/components/responses/408Timeout"
+            },
+            "413": {
+              "$ref": "#/components/responses/413PayloadTooLarge"
+            },
+            "429": {
+              "$ref": "#/components/responses/429RateLimit"
+            },
+            "500": {
+              "$ref": "#/components/responses/500InternalError"
             }
           }
         },
@@ -264,6 +356,33 @@
           "responses": {
             "204": {
               "description": "Device deleted successfully"
+            },
+            "401": {
+              "$ref": "#/components/responses/401Unauthorized"
+            },
+            "404": {
+              "description": "Device not found",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "status": {
+                        "$ref": "#/components/schemas/status"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "408": {
+              "$ref": "#/components/responses/408Timeout"
+            },
+            "429": {
+              "$ref": "#/components/responses/429RateLimit"
+            },
+            "500": {
+              "$ref": "#/components/responses/500InternalError"
             }
           }
         }
@@ -303,6 +422,9 @@
                 }
               }
             },
+            "401": {
+              "$ref": "#/components/responses/401Unauthorized"
+            },
             "404": {
               "description": "Device not connected or not found",
               "content": {
@@ -317,6 +439,12 @@
                   }
                 }
               }
+            },
+            "408": {
+              "$ref": "#/components/responses/408Timeout"
+            },
+            "429": {
+              "$ref": "#/components/responses/429RateLimit"
             },
             "500": {
               "description": "Failed to disconnect device",
@@ -389,6 +517,12 @@
                 }
               }
             },
+            "400": {
+              "$ref": "#/components/responses/400InvalidJSON"
+            },
+            "401": {
+              "$ref": "#/components/responses/401Unauthorized"
+            },
             "404": {
               "description": "Device not found",
               "content": {
@@ -403,6 +537,15 @@
                   }
                 }
               }
+            },
+            "408": {
+              "$ref": "#/components/responses/408Timeout"
+            },
+            "413": {
+              "$ref": "#/components/responses/413PayloadTooLarge"
+            },
+            "429": {
+              "$ref": "#/components/responses/429RateLimit"
             },
             "500": {
               "description": "Failed to restart device",
@@ -459,7 +602,9 @@
                     },
                     "message": {
                       "type": "string",
-                      "description": "Text message to send"
+                      "minLength": 1,
+                      "maxLength": 4096,
+                      "description": "Text message to send (WhatsApp message limit: 4096 characters)"
                     }
                   }
                 }
@@ -475,10 +620,59 @@
                     "type": "object",
                     "properties": {
                       "status": {
-                        "type": "string"
+                        "type": "string",
+                        "example": "success"
                       },
                       "messageId": {
                         "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "400": {
+              "$ref": "#/components/responses/400InvalidJSON"
+            },
+            "401": {
+              "$ref": "#/components/responses/401Unauthorized"
+            },
+            "404": {
+              "description": "Device not found or not connected",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "status": {
+                        "$ref": "#/components/schemas/status"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "408": {
+              "$ref": "#/components/responses/408Timeout"
+            },
+            "413": {
+              "$ref": "#/components/responses/413PayloadTooLarge"
+            },
+            "422": {
+              "$ref": "#/components/responses/422NotAuthenticated"
+            },
+            "429": {
+              "$ref": "#/components/responses/429RateLimit"
+            },
+            "500": {
+              "description": "Failed to send message",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "status": {
+                        "$ref": "#/components/schemas/status"
                       }
                     }
                   }
@@ -492,7 +686,7 @@
         "post": {
           "tags": ["messages"],
           "summary": "send media message",
-          "description": "Send a media message (image, video, audio, document)",
+          "description": "Send a media message (image only: PNG, JPEG, GIF, WebP). Must provide either mediaUrl or mediaBase64, but not both. Maximum file size: 10MB.",
           "operationId": "send-media-message",
           "parameters": [
             {
@@ -525,14 +719,17 @@
                     },
                     "mediaUrl": {
                       "type": "string",
-                      "description": "URL of the media file"
+                      "format": "uri",
+                      "description": "URL of the media file (PNG, JPEG, GIF, WebP only, max 10MB)"
                     },
                     "mediaBase64": {
                       "type": "string",
-                      "description": "Base64 encoded media content"
+                      "format": "byte",
+                      "description": "Base64 encoded media content (PNG, JPEG, GIF, WebP only, max 10MB)"
                     },
                     "mediaCaption": {
                       "type": "string",
+                      "maxLength": 1000,
                       "description": "Optional caption for the media"
                     }
                   }
@@ -549,10 +746,81 @@
                     "type": "object",
                     "properties": {
                       "status": {
-                        "type": "string"
+                        "type": "string",
+                        "example": "success"
                       },
                       "messageId": {
                         "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "Invalid request - either invalid JSON, missing required fields, or invalid media format",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "status": {
+                        "type": "object",
+                        "properties": {
+                          "code": {
+                            "type": "integer",
+                            "example": 400
+                          },
+                          "message": {
+                            "type": "string",
+                            "example": "Invalid image format (only PNG, JPEG, GIF, WebP allowed)"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "401": {
+              "$ref": "#/components/responses/401Unauthorized"
+            },
+            "404": {
+              "description": "Device not found or not connected",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "status": {
+                        "$ref": "#/components/schemas/status"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "408": {
+              "$ref": "#/components/responses/408Timeout"
+            },
+            "413": {
+              "$ref": "#/components/responses/413PayloadTooLarge"
+            },
+            "422": {
+              "$ref": "#/components/responses/422NotAuthenticated"
+            },
+            "429": {
+              "$ref": "#/components/responses/429RateLimit"
+            },
+            "500": {
+              "description": "Failed to send media message",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "status": {
+                        "$ref": "#/components/schemas/status"
                       }
                     }
                   }
@@ -564,6 +832,187 @@
       }
     },
     "components": {
+      "responses": {
+        "401Unauthorized": {
+          "description": "Missing or invalid authorization header",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "status": {
+                    "type": "string",
+                    "example": "error"
+                  },
+                  "error": {
+                    "type": "object",
+                    "properties": {
+                      "code": {
+                        "type": "integer",
+                        "example": 401
+                      },
+                      "message": {
+                        "type": "string",
+                        "example": "Missing or invalid authorization header. Please provide a Bearer token."
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "408Timeout": {
+          "description": "Request timeout",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "status": {
+                    "type": "object",
+                    "properties": {
+                      "code": {
+                        "type": "integer",
+                        "example": 408
+                      },
+                      "message": {
+                        "type": "string",
+                        "example": "Request timeout"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "400InvalidJSON": {
+          "description": "Invalid JSON format",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "status": {
+                    "type": "object",
+                    "properties": {
+                      "code": {
+                        "type": "integer",
+                        "example": 400
+                      },
+                      "message": {
+                        "type": "string",
+                        "example": "Invalid JSON format"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "413PayloadTooLarge": {
+          "description": "Request payload too large",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "status": {
+                    "type": "object",
+                    "properties": {
+                      "code": {
+                        "type": "integer",
+                        "example": 413
+                      },
+                      "message": {
+                        "type": "string",
+                        "example": "Request payload too large"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "422NotAuthenticated": {
+          "description": "Device is not fully authenticated",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "status": {
+                    "type": "object",
+                    "properties": {
+                      "code": {
+                        "type": "integer",
+                        "example": 422
+                      },
+                      "message": {
+                        "type": "string",
+                        "example": "Device is not fully authenticated. Please scan the QR code to complete the connection."
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "429RateLimit": {
+          "description": "Rate limit exceeded",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "status": {
+                    "type": "object",
+                    "properties": {
+                      "code": {
+                        "type": "integer",
+                        "example": 429
+                      },
+                      "message": {
+                        "type": "string",
+                        "example": "Rate limit exceeded. Maximum 100 requests per minute per user."
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "500InternalError": {
+          "description": "Internal server error",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "status": {
+                    "type": "object",
+                    "properties": {
+                      "code": {
+                        "type": "integer",
+                        "example": 500
+                      },
+                      "message": {
+                        "type": "string",
+                        "example": "Internal server error"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
       "schemas": {
         "device": {
           "type": "object",
@@ -596,14 +1045,16 @@
               "items": {
                 "type": "string",
                 "enum": [
-                  "device.connected",
-                  "device.disconnected",
-                  "qr",
-                  "qr.timeout",
+                  "connection.open",
+                  "connection.closed",
+                  "connection.auth",
+                  "connection.timeout",
+                  "connection.logout",
                   "message.received",
                   "message.sent",
                   "message.updated",
-                  "message.deleted"
+                  "message.deleted",
+                  "call"
                 ]
               },
               "description": "Events to send to webhook. See webhook documentation for event payloads."
@@ -643,14 +1094,16 @@
               "items": {
                 "type": "string",
                 "enum": [
-                  "device.connected",
-                  "device.disconnected",
-                  "qr",
-                  "qr.timeout",
+                  "connection.open",
+                  "connection.closed",
+                  "connection.auth",
+                  "connection.timeout",
+                  "connection.logout",
                   "message.received",
                   "message.sent",
                   "message.updated",
-                  "message.deleted"
+                  "message.deleted",
+                  "call"
                 ]
               },
               "description": "Events to send to webhook. See webhook documentation for event payloads."
