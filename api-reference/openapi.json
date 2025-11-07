@@ -50,6 +50,25 @@
                         "$ref": "#/components/schemas/status"
                       }
                     }
+                  },
+                  "example": {
+                    "devices": [
+                      {
+                        "id": 12345,
+                        "name": "My Device",
+                        "status": "connected",
+                        "qr": null,
+                        "webhookUrl": "https://example.com/webhook",
+                        "webhookEvents": ["message.received", "message.sent"],
+                        "messagesSent": 150,
+                        "subscription_status": "active",
+                        "createdAt": "2024-01-15T10:30:00Z"
+                      }
+                    ],
+                    "status": {
+                      "code": 200,
+                      "message": "Success"
+                    }
                   }
                 }
               }
@@ -82,13 +101,10 @@
                   "properties": {
                     "name": {
                       "type": "string",
-                      "minLength": 1,
-                      "maxLength": 20,
                       "description": "User-friendly device name"
                     },
                     "webhookUrl": {
                       "type": "string",
-                      "format": "uri",
                       "description": "Webhook URL for receiving events"
                     },
                     "webhookEvents": {
@@ -112,7 +128,6 @@
                     },
                     "phoneNumber": {
                       "type": "string",
-                      "pattern": "^\\d{8,15}$",
                       "description": "Phone number for pairing code authentication (alternative to QR code). Must be digits only, include country code, no + or spaces.",
                       "example": "31612345678"
                     }
@@ -135,6 +150,23 @@
                       "status": {
                         "$ref": "#/components/schemas/status"
                       }
+                    }
+                  },
+                  "example": {
+                    "device": {
+                      "id": 12345,
+                      "name": "My Device",
+                      "status": "qr",
+                      "qr": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAA...",
+                      "webhookUrl": "https://example.com/webhook",
+                      "webhookEvents": ["message.received", "message.sent"],
+                      "messagesSent": 0,
+                      "subscription_status": "active",
+                      "createdAt": "2024-01-15T10:30:00Z"
+                    },
+                    "status": {
+                      "code": 200,
+                      "message": "Device created successfully"
                     }
                   }
                 }
@@ -200,7 +232,6 @@
               "required": true,
               "schema": {
                 "type": "integer",
-                "minimum": 1,
                 "description": "Numeric device identifier"
               }
             }
@@ -220,6 +251,23 @@
                         "$ref": "#/components/schemas/status"
                       }
                     }
+                  },
+                  "example": {
+                    "device": {
+                      "id": 12345,
+                      "name": "My Device",
+                      "status": "connected",
+                      "qr": null,
+                      "webhookUrl": "https://example.com/webhook",
+                      "webhookEvents": ["message.received", "message.sent"],
+                      "messagesSent": 150,
+                      "subscription_status": "active",
+                      "createdAt": "2024-01-15T10:30:00Z"
+                    },
+                    "status": {
+                      "code": 200,
+                      "message": "Success"
+                    }
                   }
                 }
               }
@@ -237,6 +285,12 @@
                       "status": {
                         "$ref": "#/components/schemas/status"
                       }
+                    }
+                  },
+                  "example": {
+                    "status": {
+                      "code": 404,
+                      "message": "Device not found"
                     }
                   }
                 }
@@ -266,7 +320,6 @@
               "required": true,
               "schema": {
                 "type": "integer",
-                "minimum": 1,
                 "description": "Numeric device identifier"
               }
             }
@@ -296,6 +349,23 @@
                         "$ref": "#/components/schemas/status"
                       }
                     }
+                  },
+                  "example": {
+                    "device": {
+                      "id": 12345,
+                      "name": "Updated Device Name",
+                      "status": "connected",
+                      "qr": null,
+                      "webhookUrl": "https://example.com/new-webhook",
+                      "webhookEvents": ["message.received"],
+                      "messagesSent": 150,
+                      "subscription_status": "active",
+                      "createdAt": "2024-01-15T10:30:00Z"
+                    },
+                    "status": {
+                      "code": 200,
+                      "message": "Device updated successfully"
+                    }
                   }
                 }
               }
@@ -316,6 +386,12 @@
                       "status": {
                         "$ref": "#/components/schemas/status"
                       }
+                    }
+                  },
+                  "example": {
+                    "status": {
+                      "code": 404,
+                      "message": "Device not found"
                     }
                   }
                 }
@@ -348,7 +424,6 @@
               "required": true,
               "schema": {
                 "type": "integer",
-                "minimum": 1,
                 "description": "Numeric device identifier"
               }
             }
@@ -370,6 +445,12 @@
                       "status": {
                         "$ref": "#/components/schemas/status"
                       }
+                    }
+                  },
+                  "example": {
+                    "status": {
+                      "code": 404,
+                      "message": "Device not found"
                     }
                   }
                 }
@@ -401,7 +482,6 @@
               "required": true,
               "schema": {
                 "type": "integer",
-                "minimum": 1,
                 "description": "Numeric device identifier"
               }
             }
@@ -417,6 +497,12 @@
                       "status": {
                         "$ref": "#/components/schemas/status"
                       }
+                    }
+                  },
+                  "example": {
+                    "status": {
+                      "code": 200,
+                      "message": "Device 12345 disconnected successfully"
                     }
                   }
                 }
@@ -435,6 +521,12 @@
                       "status": {
                         "$ref": "#/components/schemas/status"
                       }
+                    }
+                  },
+                  "example": {
+                    "status": {
+                      "code": 404,
+                      "message": "Device 12345 is not connected."
                     }
                   }
                 }
@@ -457,6 +549,12 @@
                         "$ref": "#/components/schemas/status"
                       }
                     }
+                  },
+                  "example": {
+                    "status": {
+                      "code": 500,
+                      "message": "Failed to disconnect device 12345"
+                    }
                   }
                 }
               }
@@ -478,7 +576,6 @@
               "required": true,
               "schema": {
                 "type": "integer",
-                "minimum": 1,
                 "description": "Numeric device identifier"
               }
             }
@@ -492,7 +589,6 @@
                   "properties": {
                     "phoneNumber": {
                       "type": "string",
-                      "pattern": "^\\d{8,15}$",
                       "description": "Phone number for pairing code authentication (alternative to QR code). Must be digits only, include country code.",
                       "example": "31612345678"
                     }
@@ -512,6 +608,12 @@
                       "status": {
                         "$ref": "#/components/schemas/status"
                       }
+                    }
+                  },
+                  "example": {
+                    "status": {
+                      "code": 200,
+                      "message": "Device 12345 restarted successfully"
                     }
                   }
                 }
@@ -533,6 +635,12 @@
                       "status": {
                         "$ref": "#/components/schemas/status"
                       }
+                    }
+                  },
+                  "example": {
+                    "status": {
+                      "code": 404,
+                      "message": "Device not found"
                     }
                   }
                 }
@@ -558,6 +666,12 @@
                         "$ref": "#/components/schemas/status"
                       }
                     }
+                  },
+                  "example": {
+                    "status": {
+                      "code": 500,
+                      "message": "Failed to restart device 12345"
+                    }
                   }
                 }
               }
@@ -579,7 +693,6 @@
               "required": true,
               "schema": {
                 "type": "integer",
-                "minimum": 1,
                 "description": "Numeric device identifier"
               }
             }
@@ -594,17 +707,12 @@
                   "properties": {
                     "toNumber": {
                       "type": "string",
-                      "minLength": 8,
-                      "maxLength": 15,
-                      "pattern": "^\\d+$",
                       "description": "WhatsApp phone number (digits only)",
                       "example": "31620292537"
                     },
                     "message": {
                       "type": "string",
-                      "minLength": 1,
-                      "maxLength": 4096,
-                      "description": "Text message to send (WhatsApp message limit: 4096 characters)"
+                      "description": "Text message to send"
                     }
                   }
                 }
@@ -627,6 +735,10 @@
                         "type": "string"
                       }
                     }
+                  },
+                  "example": {
+                    "status": "success",
+                    "messageId": "3EB0C1F0B2F0A1D5E8F4"
                   }
                 }
               }
@@ -647,6 +759,12 @@
                       "status": {
                         "$ref": "#/components/schemas/status"
                       }
+                    }
+                  },
+                  "example": {
+                    "status": {
+                      "code": 404,
+                      "message": "Device 12345 is not connected."
                     }
                   }
                 }
@@ -675,6 +793,12 @@
                         "$ref": "#/components/schemas/status"
                       }
                     }
+                  },
+                  "example": {
+                    "status": {
+                      "code": 500,
+                      "message": "Failed to send message"
+                    }
                   }
                 }
               }
@@ -696,7 +820,6 @@
               "required": true,
               "schema": {
                 "type": "integer",
-                "minimum": 1,
                 "description": "Numeric device identifier"
               }
             }
@@ -711,25 +834,19 @@
                   "properties": {
                     "toNumber": {
                       "type": "string",
-                      "minLength": 8,
-                      "maxLength": 15,
-                      "pattern": "^\\d+$",
                       "description": "WhatsApp phone number (digits only)",
                       "example": "31620292537"
                     },
                     "mediaUrl": {
                       "type": "string",
-                      "format": "uri",
-                      "description": "URL of the media file (PNG, JPEG, GIF, WebP only, max 10MB)"
+                      "description": "URL of the media file"
                     },
                     "mediaBase64": {
                       "type": "string",
-                      "format": "byte",
-                      "description": "Base64 encoded media content (PNG, JPEG, GIF, WebP only, max 10MB)"
+                      "description": "Base64 encoded media content"
                     },
                     "mediaCaption": {
                       "type": "string",
-                      "maxLength": 1000,
                       "description": "Optional caption for the media"
                     }
                   }
@@ -753,6 +870,10 @@
                         "type": "string"
                       }
                     }
+                  },
+                  "example": {
+                    "status": "success",
+                    "messageId": "3EB0C1F0B2F0A1D5E8F4"
                   }
                 }
               }
@@ -796,6 +917,12 @@
                         "$ref": "#/components/schemas/status"
                       }
                     }
+                  },
+                  "example": {
+                    "status": {
+                      "code": 404,
+                      "message": "Device 12345 is not connected. Please restart the device or scan the QR code to connect."
+                    }
                   }
                 }
               }
@@ -822,6 +949,12 @@
                       "status": {
                         "$ref": "#/components/schemas/status"
                       }
+                    }
+                  },
+                  "example": {
+                    "status": {
+                      "code": 500,
+                      "message": "Failed to send media message"
                     }
                   }
                 }
@@ -1080,8 +1213,6 @@
           "properties": {
             "name": {
               "type": "string",
-              "minLength": 1,
-              "maxLength": 20,
               "description": "New name for the device"
             },
             "webhookUrl": {
@@ -1120,11 +1251,13 @@
           "properties": {
             "code": {
               "type": "integer",
-              "description": "Status code"
+              "description": "Status code",
+              "example": 200
             },
             "message": {
               "type": "string",
-              "description": "Status message"
+              "description": "Status message",
+              "example": "Success"
             }
           }
         }
@@ -1133,7 +1266,7 @@
         "bearerAuth": {
           "type": "http",
           "scheme": "bearer",
-          "description": "API key authentication. Provide your API key as: Authorization: Bearer <api_key>. Alternative: X-API-Key: <api_key> header."
+          "description": "API key authentication. Provide your API key as: Authorization: Bearer <api_key>"
         }
       }
     }
