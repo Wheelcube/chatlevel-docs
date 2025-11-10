@@ -1,23 +1,19 @@
 ---
-title: "ChatLevel n8n Integration"
-description: "Connect WhatsApp to your n8n workflows with ChatLevel"
+title: "n8n"
+description: "Connect WhatsApp to your n8n workflows with Chatlevel"
 ---
-
-# ChatLevel n8n Integration
-
-The ChatLevel n8n integration provides two nodes to interact with the ChatLevel WhatsApp API, enabling you to automate WhatsApp messaging and respond to events in your workflows.
 
 ## What's Included
 
-**📤 ChatLevel Node** - Manage devices and send WhatsApp messages\
-**🎣 ChatLevel Trigger Node** - Listen for WhatsApp events via webhooks with dedicated output branches
+**📤 Chatlevel Node** - Manage devices and send WhatsApp messages\
+**🎣 Chatlevel Trigger Node** - Listen for WhatsApp events via webhooks with dedicated output branches
 
 ---
 
 ## Installation
 
 1. Navigate to **Settings** → **Community Nodes** in your n8n instance
-2. Click **Install** and enter the npm package name: `n8n-nodes-chatlevel`
+2. Click **Install** and enter the npm package name: `n8n-nodes-Chatlevel`
 3. Click **Install** and wait for completion
 
 > **Note:** Make sure your n8n instance has internet access to download the package from npm.
@@ -26,24 +22,24 @@ The ChatLevel n8n integration provides two nodes to interact with the ChatLevel 
 
 ## Configuration
 
-### Getting Your API Key from ChatLevel
+### Getting Your API Key from Chatlevel
 
-1. Log in to your ChatLevel account
+1. Log in to your Chatlevel account
 2. Go to **Integrations** → **Add Integration** → **n8n**
 3. Copy the generated API key
 
 ### Setting Up Credentials in n8n
 
-1. In n8n, go to **Credentials** → **New** and search for "ChatLevel API"
-2. Enter your API key from ChatLevel
-3. (Optional) Set Base URL - Defaults to `https://api.chatlevel.io/v1`
+1. In n8n, go to **Credentials** → **New** and search for "Chatlevel API"
+2. Enter your API key from Chatlevel
+3. (Optional) Set Base URL - Defaults to `https://api.Chatlevel.io/v1`
 4. Click **Save**
 
 ---
 
-## ChatLevel Node
+## Chatlevel Node
 
-The ChatLevel node allows you to perform operations on devices and send messages.
+The Chatlevel node allows you to perform operations on devices and send messages.
 
 ### Device Operations
 
@@ -71,9 +67,9 @@ The ChatLevel node allows you to perform operations on devices and send messages
 
 ---
 
-## ChatLevel Trigger Node
+## Chatlevel Trigger Node
 
-The ChatLevel Trigger node listens for events from ChatLevel via webhooks. Each event type outputs to its own dedicated branch.
+The Chatlevel Trigger node listens for events from Chatlevel via webhooks. Each event type outputs to its own dedicated branch.
 
 ### Event Branches
 
@@ -94,15 +90,15 @@ The trigger node provides **10 output branches**, one for each event type:
 
 ### Setup Guide
 
-1. **Add Trigger Node** - Add the ChatLevel Trigger node to your n8n workflow
+1. **Add Trigger Node** - Add the Chatlevel Trigger node to your n8n workflow
 2. **Copy Webhook URL** - Click the node to reveal and copy the Webhook URL
-3. **Configure in ChatLevel**:
-   - Go to **Integrations** → **Add Integration** → **n8n** in ChatLevel
+3. **Configure in Chatlevel**:
+   - Go to **Integrations** → **Add Integration** → **n8n** in Chatlevel
    - Paste the webhook URL from step 2
    - In the **Integrations** tab, adjust which events you want to receive on your webhook
 4. **Connect Branches** - Connect different nodes to different output branches to handle events separately
 
-> **Info:** Events automatically route to the correct output branch. You can select specific events in ChatLevel's Integrations tab to reduce webhook traffic.
+> **Info:** Events automatically route to the correct output branch. You can select specific events in Chatlevel's Integrations tab to reduce webhook traffic.
 
 ---
 
@@ -139,7 +135,7 @@ The trigger node provides **10 output branches**, one for each event type:
 
 **Media Messages** - Supported formats: PNG, JPEG, GIF, WebP only. Maximum size: 10MB.
 
-**Event Filtering** - Use ChatLevel's Integrations tab to select specific events and reduce webhook traffic.
+**Event Filtering** - Use Chatlevel's Integrations tab to select specific events and reduce webhook traffic.
 
 **Multiple Devices** - Each trigger node can handle events from multiple devices. Use the `deviceId` field to identify the source device.
 
@@ -149,10 +145,10 @@ The trigger node provides **10 output branches**, one for each event type:
 
 **Webhooks Not Received**
 
-- Verify webhook URL is configured correctly in ChatLevel's Integrations tab
+- Verify webhook URL is configured correctly in Chatlevel's Integrations tab
 - Ensure n8n instance is accessible from the internet
 - Check device is connected and subscription is active
-- Verify correct events are selected in ChatLevel's Integrations tab
+- Verify correct events are selected in Chatlevel's Integrations tab
 
 **Device Not Connecting**
 
