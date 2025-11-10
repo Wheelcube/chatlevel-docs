@@ -78,7 +78,7 @@ The trigger node provides **10 output branches**, one for each event type:
 | Branch Output    | Event Name           | Description                        |
 | ---------------- | -------------------- | ---------------------------------- |
 | **Call**         | `call`               | Incoming or outgoing call detected |
-| **Auth**         | `connection.auth`    | Device authentication successful   |
+| **Auth**         | `connection.auth`    | QR / Pairing Code Receipt          |
 | **Closed**       | `connection.closed`  | Connection closed                  |
 | **Logout**       | `connection.logout`  | Device logged out                  |
 | **Open**         | `connection.open`    | Connection established             |
@@ -106,7 +106,7 @@ The trigger node provides **10 output branches**, one for each event type:
 
 **Connection Events:**
 
-- `connection.auth` - Device authenticated with WhatsApp
+- `connection.auth` - QR / Pairing Code Receipt
 - `connection.open` - Connection established, device ready
 - `connection.closed` - Connection closed
 - `connection.logout` - Device logged out, requires re-authentication
