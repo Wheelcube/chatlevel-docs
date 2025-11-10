@@ -22,7 +22,8 @@
           {
             "group": "Integrations",
             "pages": [
-              "integrations/highlevel"
+              "integrations/highlevel",
+              "integrations/n8n"
             ]
           },
           {

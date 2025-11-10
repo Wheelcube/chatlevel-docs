@@ -1,0 +1,169 @@
+---
+title: "ChatLevel n8n Integration"
+description: "Connect WhatsApp to your n8n workflows with ChatLevel"
+---
+
+# ChatLevel n8n Integration
+
+The ChatLevel n8n integration provides two nodes to interact with the ChatLevel WhatsApp API, enabling you to automate WhatsApp messaging and respond to events in your workflows.
+
+## What's Included
+
+**📤 ChatLevel Node** - Manage devices and send WhatsApp messages\
+**🎣 ChatLevel Trigger Node** - Listen for WhatsApp events via webhooks with dedicated output branches
+
+---
+
+## Installation
+
+1. Navigate to **Settings** → **Community Nodes** in your n8n instance
+2. Click **Install** and enter the npm package name: `n8n-nodes-chatlevel`
+3. Click **Install** and wait for completion
+
+> **Note:** Make sure your n8n instance has internet access to download the package from npm.
+
+---
+
+## Configuration
+
+### Getting Your API Key from ChatLevel
+
+1. Log in to your ChatLevel account
+2. Go to **Integrations** → **Add Integration** → **n8n**
+3. Copy the generated API key
+
+### Setting Up Credentials in n8n
+
+1. In n8n, go to **Credentials** → **New** and search for "ChatLevel API"
+2. Enter your API key from ChatLevel
+3. (Optional) Set Base URL - Defaults to `https://api.chatlevel.io/v1`
+4. Click **Save**
+
+---
+
+## ChatLevel Node
+
+The ChatLevel node allows you to perform operations on devices and send messages.
+
+### Device Operations
+
+**Create Device** - Create a new WhatsApp device instance. Optionally provide a name, webhook URL, webhook events, or phone number for pairing code authentication.
+
+**Get Device** - Retrieve a single device by ID.
+
+**Get Many Devices** - Retrieve all your devices.
+
+**Update Device** - Update a device's name, webhook URL, webhook events, or subscription status (active/inactive).
+
+**Delete Device** - Permanently delete a device.
+
+**Disconnect Device** - Disconnect a device from WhatsApp without deleting it.
+
+**Restart Device** - Restart a device's WhatsApp connection. Optionally provide a phone number for pairing code.
+
+### Message Operations
+
+**Send Text** - Send a text message to a WhatsApp number. Requires device ID, recipient number (digits only with country code), and message text.
+
+**Send Media** - Send an image (PNG, JPEG, GIF, WebP only, max 10MB) to a WhatsApp number. Choose between URL or Base64 source. Optionally add a caption.
+
+> **Note:** Phone numbers must be formatted as digits only with country code (e.g., `31612345678`)
+
+---
+
+## ChatLevel Trigger Node
+
+The ChatLevel Trigger node listens for events from ChatLevel via webhooks. Each event type outputs to its own dedicated branch.
+
+### Event Branches
+
+The trigger node provides **10 output branches**, one for each event type:
+
+| Branch Output    | Event Name           | Description                        |
+| ---------------- | -------------------- | ---------------------------------- |
+| **Call**         | `call`               | Incoming or outgoing call detected |
+| **Auth**         | `connection.auth`    | Device authentication successful   |
+| **Closed**       | `connection.closed`  | Connection closed                  |
+| **Logout**       | `connection.logout`  | Device logged out                  |
+| **Open**         | `connection.open`    | Connection established             |
+| **Timeout**      | `connection.timeout` | Connection timed out               |
+| **Msg Deleted**  | `message.deleted`    | Message deleted                    |
+| **Msg Received** | `message.received`   | Message received                   |
+| **Msg Sent**     | `message.sent`       | Message sent                       |
+| **Msg Updated**  | `message.updated`    | Message updated                    |
+
+### Setup Guide
+
+1. **Add Trigger Node** - Add the ChatLevel Trigger node to your n8n workflow
+2. **Copy Webhook URL** - Click the node to reveal and copy the Webhook URL
+3. **Configure in ChatLevel**:
+   - Go to **Integrations** → **Add Integration** → **n8n** in ChatLevel
+   - Paste the webhook URL from step 2
+   - In the **Integrations** tab, adjust which events you want to receive on your webhook
+4. **Connect Branches** - Connect different nodes to different output branches to handle events separately
+
+> **Info:** Events automatically route to the correct output branch. You can select specific events in ChatLevel's Integrations tab to reduce webhook traffic.
+
+---
+
+## Event Reference
+
+**Connection Events:**
+
+- `connection.auth` - Device authenticated with WhatsApp
+- `connection.open` - Connection established, device ready
+- `connection.closed` - Connection closed
+- `connection.logout` - Device logged out, requires re-authentication
+- `connection.timeout` - Connection timed out
+
+**Message Events:**
+
+- `message.received` - New message received (most common for automation)
+- `message.sent` - Message successfully sent
+- `message.updated` - Message edited or modified
+- `message.deleted` - Message deleted
+
+**Call Events:**
+
+- `call` - Call detected on WhatsApp
+
+---
+
+## Tips & Best Practices
+
+**Phone Number Format** - Always use digits only with country code: `31612345678` (not `+31 6 12345678`)
+
+**Device Selection** - Use "From List" when building workflows. Use "By ID" when device IDs are dynamic.
+
+**Error Handling** - Enable "Continue on Fail" in node settings to prevent workflow stops on API errors.
+
+**Media Messages** - Supported formats: PNG, JPEG, GIF, WebP only. Maximum size: 10MB.
+
+**Event Filtering** - Use ChatLevel's Integrations tab to select specific events and reduce webhook traffic.
+
+**Multiple Devices** - Each trigger node can handle events from multiple devices. Use the `deviceId` field to identify the source device.
+
+---
+
+## Troubleshooting
+
+**Webhooks Not Received**
+
+- Verify webhook URL is configured correctly in ChatLevel's Integrations tab
+- Ensure n8n instance is accessible from the internet
+- Check device is connected and subscription is active
+- Verify correct events are selected in ChatLevel's Integrations tab
+
+**Device Not Connecting**
+
+- Scan QR code within time limit or use pairing code
+- Ensure device subscription status is "active"
+- Try restarting the device
+- Delete and recreate if issues persist
+
+**Messages Not Sending**
+
+- Verify recipient number format (digits only with country code)
+- Check device status is "connected"
+- Ensure active subscription
+- For media: verify format (PNG, JPEG, GIF, WebP) and size (less than 10MB)
