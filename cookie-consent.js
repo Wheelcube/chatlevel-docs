@@ -215,10 +215,9 @@
 
   /**
    * Detects if dark mode is currently active
-   * Checks multiple sources: data attributes, classes, and media queries
+   * Checks multiple sources: data attributes, classes, and CSS properties
    */
   function isDarkMode() {
-    // Check for dark mode via data-theme attribute (common in Mintlify)
     const htmlElement = document.documentElement;
     const bodyElement = document.body;
 
@@ -228,6 +227,25 @@
     console.log('HTML classes:', htmlElement.className);
     console.log('Body classes:', bodyElement.className);
 
+    // Check color-scheme CSS property (most reliable for Mintlify)
+    const colorScheme = window.getComputedStyle(htmlElement).colorScheme;
+    console.log('color-scheme property:', colorScheme);
+    if (colorScheme === 'dark') {
+      console.log('Dark mode detected via color-scheme property');
+      return true;
+    }
+    if (colorScheme === 'light') {
+      console.log('Light mode detected via color-scheme property');
+      return false;
+    }
+
+    // Check for "light" class (Mintlify adds this in light mode)
+    if (htmlElement.classList.contains('light') ||
+        bodyElement.classList.contains('light')) {
+      console.log('Light mode detected via .light class');
+      return false;
+    }
+
     // Check data-theme attribute
     if (htmlElement.getAttribute('data-theme') === 'dark' ||
         bodyElement.getAttribute('data-theme') === 'dark') {
@@ -235,14 +253,20 @@
       return true;
     }
 
+    if (htmlElement.getAttribute('data-theme') === 'light' ||
+        bodyElement.getAttribute('data-theme') === 'light') {
+      console.log('Light mode detected via data-theme');
+      return false;
+    }
+
     // Check for dark mode class on html or body element
     if (htmlElement.classList.contains('dark') ||
         bodyElement.classList.contains('dark')) {
-      console.log('Dark mode detected via class');
+      console.log('Dark mode detected via .dark class');
       return true;
     }
 
-    // Check for Mintlify-specific dark mode indicator
+    // Check for Mintlify-specific dark mode indicator in className
     const isDarkClass = htmlElement.className.includes('dark') ||
                         bodyElement.className.includes('dark');
     if (isDarkClass) {
@@ -250,25 +274,8 @@
       return true;
     }
 
-    // Check computed background color as last resort
-    const bgColor = window.getComputedStyle(htmlElement).backgroundColor;
-    if (bgColor) {
-      // Parse RGB values
-      const match = bgColor.match(/\d+/g);
-      if (match) {
-        const [r, g, b] = match.map(Number);
-        // If background is dark (low RGB values), assume dark mode
-        const brightness = (r + g + b) / 3;
-        console.log('Background brightness:', brightness, 'RGB:', r, g, b);
-        if (brightness < 128) {
-          console.log('Dark mode detected via background color');
-          return true;
-        }
-      }
-    }
-
+    // Don't check background color - it's unreliable (returns 0,0,0 for transparent)
     // Don't check system preference - it overrides the actual page theme
-    // We should respect what Mintlify is actually displaying, not the OS preference
 
     console.log('Light mode detected (default)');
     return false;
