@@ -77,12 +77,39 @@
       localStorage.setItem(CONSENT_KEY, value);
       console.log('Cookie consent set to:', value);
 
-      // Trigger a page reload to activate PostHog after consent is granted
+      // Initialize PostHog if consent is granted
       if (value === CONSENT_VALUE_GRANTED) {
-        window.location.reload();
+        initializePostHog();
       }
     } catch (e) {
       console.error('Failed to set consent status:', e);
+    }
+  }
+
+  /**
+   * Initializes PostHog analytics
+   */
+  function initializePostHog() {
+    // Check if PostHog is already loaded
+    if (window.posthog && window.posthog.__loaded) {
+      console.log('PostHog already initialized');
+      return;
+    }
+
+    try {
+      // PostHog initialization script
+      !function(t,e){var o,n,p,r;e.__SV||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}(p=t.createElement("script")).type="text/javascript",p.crossOrigin="anonymous",p.async=!0,p.src=s.api_host.replace(".i.posthog.com","-assets.i.posthog.com")+"/static/array.js",(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r);var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(1)+".people (stub)"},o="init capture register register_once register_for_session unregister unregister_for_session getFeatureFlag getFeatureFlagPayload isFeatureEnabled reloadFeatureFlags updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures on onFeatureFlags onSessionId identify setPersonProperties group resetGroups setPersonPropertiesForFlags resetPersonPropertiesForFlags setGroupPropertiesForFlags resetGroupPropertiesForFlags reset get_distinct_id getGroups get_session_id get_session_replay_url alias set_config startSessionRecording stopSessionRecording sessionRecordingStarted captureException loadToolbar get_property getSessionProperty opt_in_capturing opt_out_capturing has_opted_in_capturing has_opted_out_capturing clear_opt_in_out_capturing debug".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
+
+      window.posthog.init('phc_8s95aHTNzDk66PrTRsP2eb4WBkKZ3SixL7G3B45H3Al', {
+        api_host: 'https://eu.i.posthog.com',
+        person_profiles: 'identified_only',
+        capture_pageview: true,
+        capture_pageleave: true
+      });
+
+      console.log('PostHog initialized successfully');
+    } catch (error) {
+      console.error('Failed to initialize PostHog:', error);
     }
   }
 
@@ -188,29 +215,29 @@
   function showConsentBanner() {
     const darkMode = isDarkMode();
 
-    // Define color schemes
+    // Define color schemes (matching shadcn/ui design system)
     const colors = darkMode ? {
-      cardBg: '#1f2937',
-      cardBorder: '#374151',
-      titleColor: '#f9fafb',
-      textColor: '#d1d5db',
-      linkColor: '#9ca3af',
-      linkHoverColor: '#f9fafb',
-      declineBg: 'transparent',
-      declineBorder: '#4b5563',
-      declineColor: '#d1d5db',
-      declineHoverBg: '#374151'
+      cardBg: 'rgba(9, 9, 11, 0.95)',  // bg-card/95 with backdrop blur effect
+      cardBorder: '#27272a',
+      titleColor: '#fafafa',
+      textColor: '#a1a1aa',  // text-muted-foreground
+      linkColor: '#a1a1aa',
+      linkHoverColor: '#fafafa',  // hover:text-foreground
+      declineBg: 'rgba(39, 39, 42, 0.3)',  // dark:bg-input/30
+      declineBorder: '#27272a',  // dark:border-input
+      declineColor: '#fafafa',
+      declineHoverBg: 'rgba(39, 39, 42, 0.5)'  // dark:hover:bg-input/50
     } : {
-      cardBg: 'white',
-      cardBorder: '#e5e5e5',
-      titleColor: '#111827',
-      textColor: '#4b5563',
-      linkColor: '#4b5563',
-      linkHoverColor: '#111827',
-      declineBg: 'white',
-      declineBorder: '#d1d5db',
-      declineColor: '#374151',
-      declineHoverBg: '#f9fafb'
+      cardBg: 'rgba(255, 255, 255, 0.95)',  // bg-background/95 with backdrop blur
+      cardBorder: '#e4e4e7',
+      titleColor: '#09090b',
+      textColor: '#71717a',  // text-muted-foreground
+      linkColor: '#71717a',
+      linkHoverColor: '#09090b',  // hover:text-foreground
+      declineBg: 'white',  // bg-background
+      declineBorder: '#e4e4e7',
+      declineColor: '#09090b',
+      declineHoverBg: '#f4f4f5'  // hover:bg-accent
     };
 
     // Create banner container
@@ -231,6 +258,8 @@
     const card = document.createElement('div');
     card.style.cssText = `
       background: ${colors.cardBg};
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
       border: 1px solid ${colors.cardBorder};
       border-radius: 0.5rem;
       box-shadow: 0 10px 15px -3px rgba(0, 0, 0, ${darkMode ? '0.3' : '0.1'}), 0 4px 6px -2px rgba(0, 0, 0, ${darkMode ? '0.2' : '0.05'});
@@ -400,6 +429,12 @@
     const currentConsent = getConsentStatus();
     if (currentConsent) {
       console.log('User already made consent decision:', currentConsent);
+
+      // Initialize PostHog if consent was granted
+      if (currentConsent === CONSENT_VALUE_GRANTED) {
+        initializePostHog();
+      }
+
       return;
     }
 

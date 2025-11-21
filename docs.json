@@ -78,14 +78,5 @@
      "vscode"
    ]
   },
-  "integrations": {
-    "posthog": {
-      "apiKey": "phc_8s95aHTNzDk66PrTRsP2eb4WBkKZ3SixL7G3B45H3Al",
-      "sessionRecording": true
-    },
-    "cookies": {
-      "key": "cookie-consent",
-      "value": "granted"
-    }
-  }
+  "integrations": {}
 }
