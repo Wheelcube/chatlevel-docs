@@ -51,7 +51,8 @@
   },
   "logo": {
     "light": "/logo.png",
-    "dark": "/logo.png"
+    "dark": "/logo.png",
+    "href": "https://chatlevel.io"
   },
   "navbar": {
     "links": [

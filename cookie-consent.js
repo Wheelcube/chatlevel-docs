@@ -222,15 +222,23 @@
     const htmlElement = document.documentElement;
     const bodyElement = document.body;
 
+    console.log('Checking dark mode...');
+    console.log('HTML data-theme:', htmlElement.getAttribute('data-theme'));
+    console.log('Body data-theme:', bodyElement.getAttribute('data-theme'));
+    console.log('HTML classes:', htmlElement.className);
+    console.log('Body classes:', bodyElement.className);
+
     // Check data-theme attribute
     if (htmlElement.getAttribute('data-theme') === 'dark' ||
         bodyElement.getAttribute('data-theme') === 'dark') {
+      console.log('Dark mode detected via data-theme');
       return true;
     }
 
     // Check for dark mode class on html or body element
     if (htmlElement.classList.contains('dark') ||
         bodyElement.classList.contains('dark')) {
+      console.log('Dark mode detected via class');
       return true;
     }
 
@@ -238,6 +246,7 @@
     const isDarkClass = htmlElement.className.includes('dark') ||
                         bodyElement.className.includes('dark');
     if (isDarkClass) {
+      console.log('Dark mode detected via className string match');
       return true;
     }
 
@@ -250,17 +259,21 @@
         const [r, g, b] = match.map(Number);
         // If background is dark (low RGB values), assume dark mode
         const brightness = (r + g + b) / 3;
+        console.log('Background brightness:', brightness, 'RGB:', r, g, b);
         if (brightness < 128) {
+          console.log('Dark mode detected via background color');
           return true;
         }
       }
     }
 
-    // Fallback to system preference
+    // Check system preference as last resort (not as default)
     if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      console.log('Dark mode detected via system preference');
       return true;
     }
 
+    console.log('Light mode detected (default)');
     return false;
   }
 
