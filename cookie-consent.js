@@ -221,48 +221,35 @@
     const htmlElement = document.documentElement;
     const bodyElement = document.body;
 
-    console.log('Checking dark mode...');
-    console.log('HTML data-theme:', htmlElement.getAttribute('data-theme'));
-    console.log('Body data-theme:', bodyElement.getAttribute('data-theme'));
-    console.log('HTML classes:', htmlElement.className);
-    console.log('Body classes:', bodyElement.className);
-
     // Check color-scheme CSS property (most reliable for Mintlify)
     const colorScheme = window.getComputedStyle(htmlElement).colorScheme;
-    console.log('color-scheme property:', colorScheme);
     if (colorScheme === 'dark') {
-      console.log('Dark mode detected via color-scheme property');
       return true;
     }
     if (colorScheme === 'light') {
-      console.log('Light mode detected via color-scheme property');
       return false;
     }
 
     // Check for "light" class (Mintlify adds this in light mode)
     if (htmlElement.classList.contains('light') ||
         bodyElement.classList.contains('light')) {
-      console.log('Light mode detected via .light class');
       return false;
     }
 
     // Check data-theme attribute
     if (htmlElement.getAttribute('data-theme') === 'dark' ||
         bodyElement.getAttribute('data-theme') === 'dark') {
-      console.log('Dark mode detected via data-theme');
       return true;
     }
 
     if (htmlElement.getAttribute('data-theme') === 'light' ||
         bodyElement.getAttribute('data-theme') === 'light') {
-      console.log('Light mode detected via data-theme');
       return false;
     }
 
     // Check for dark mode class on html or body element
     if (htmlElement.classList.contains('dark') ||
         bodyElement.classList.contains('dark')) {
-      console.log('Dark mode detected via .dark class');
       return true;
     }
 
@@ -270,14 +257,10 @@
     const isDarkClass = htmlElement.className.includes('dark') ||
                         bodyElement.className.includes('dark');
     if (isDarkClass) {
-      console.log('Dark mode detected via className string match');
       return true;
     }
 
-    // Don't check background color - it's unreliable (returns 0,0,0 for transparent)
-    // Don't check system preference - it overrides the actual page theme
-
-    console.log('Light mode detected (default)');
+    // Default to light mode
     return false;
   }
 
@@ -377,8 +360,6 @@
         }
       }
     `;
-
-    console.log('Banner theme updated:', darkMode ? 'dark' : 'light');
   }
 
   /**
