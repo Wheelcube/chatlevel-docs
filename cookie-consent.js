@@ -267,11 +267,8 @@
       }
     }
 
-    // Check system preference as last resort (not as default)
-    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-      console.log('Dark mode detected via system preference');
-      return true;
-    }
+    // Don't check system preference - it overrides the actual page theme
+    // We should respect what Mintlify is actually displaying, not the OS preference
 
     console.log('Light mode detected (default)');
     return false;
