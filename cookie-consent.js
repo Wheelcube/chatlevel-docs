@@ -29,11 +29,40 @@
   let cachedGeoData = null;
 
   /**
-   * Gets current consent status from localStorage
+   * Gets a cookie value by name
+   */
+  function getCookie(name) {
+    try {
+      const value = `; ${document.cookie}`;
+      const parts = value.split(`; ${name}=`);
+      if (parts.length === 2) {
+        return parts.pop().split(';').shift();
+      }
+      return null;
+    } catch (e) {
+      console.warn('Failed to read cookie:', e);
+      return null;
+    }
+  }
+
+  /**
+   * Gets current consent status from localStorage or cookie
    */
   function getConsentStatus() {
     try {
-      return localStorage.getItem(CONSENT_KEY);
+      // Check localStorage first
+      const localStorageValue = localStorage.getItem(CONSENT_KEY);
+      if (localStorageValue) {
+        return localStorageValue;
+      }
+
+      // Check cookie as fallback
+      const cookieValue = getCookie(CONSENT_KEY);
+      if (cookieValue) {
+        return cookieValue;
+      }
+
+      return null;
     } catch (e) {
       console.warn('Failed to read consent status:', e);
       return null;
@@ -136,9 +165,54 @@
   }
 
   /**
-   * Creates and shows the cookie consent banner (minimal variant - matches shadcn design)
+   * Detects if dark mode is currently active
+   */
+  function isDarkMode() {
+    // Check for dark mode class on html or body element
+    if (document.documentElement.classList.contains('dark') ||
+        document.body.classList.contains('dark')) {
+      return true;
+    }
+
+    // Check for dark mode using media query
+    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      return true;
+    }
+
+    return false;
+  }
+
+  /**
+   * Creates and shows the cookie consent banner
    */
   function showConsentBanner() {
+    const darkMode = isDarkMode();
+
+    // Define color schemes
+    const colors = darkMode ? {
+      cardBg: '#1f2937',
+      cardBorder: '#374151',
+      titleColor: '#f9fafb',
+      textColor: '#d1d5db',
+      linkColor: '#9ca3af',
+      linkHoverColor: '#f9fafb',
+      declineBg: 'transparent',
+      declineBorder: '#4b5563',
+      declineColor: '#d1d5db',
+      declineHoverBg: '#374151'
+    } : {
+      cardBg: 'white',
+      cardBorder: '#e5e5e5',
+      titleColor: '#111827',
+      textColor: '#4b5563',
+      linkColor: '#4b5563',
+      linkHoverColor: '#111827',
+      declineBg: 'white',
+      declineBorder: '#d1d5db',
+      declineColor: '#374151',
+      declineHoverBg: '#f9fafb'
+    };
+
     // Create banner container
     const banner = document.createElement('div');
     banner.id = 'cookie-consent-banner';
@@ -156,62 +230,60 @@
     // Create card
     const card = document.createElement('div');
     card.style.cssText = `
-      background: white;
-      border: 1px solid #e5e7eb;
+      background: ${colors.cardBg};
+      border: 1px solid ${colors.cardBorder};
       border-radius: 0.5rem;
-      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-      margin: 0;
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, ${darkMode ? '0.3' : '0.1'}), 0 4px 6px -2px rgba(0, 0, 0, ${darkMode ? '0.2' : '0.05'});
+      padding: 1.5rem;
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
     `;
 
-    // Create header with icon
-    const header = document.createElement('div');
-    header.style.cssText = `
-      padding: 0.75rem;
+    // Create content wrapper
+    const contentWrapper = document.createElement('div');
+    contentWrapper.style.cssText = `
       display: flex;
-      align-items: center;
-      justify-content: space-between;
-      border-bottom: 1px solid #e5e7eb;
+      flex-direction: column;
+      gap: 1rem;
     `;
 
-    const headerContent = document.createElement('div');
-    headerContent.style.cssText = 'display: flex; align-items: center; gap: 0.5rem;';
+    // Create text area
+    const textArea = document.createElement('div');
+    textArea.style.cssText = `
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    `;
 
-    // Cookie icon (simplified SVG)
-    const icon = document.createElement('span');
-    icon.innerHTML = '🍪';
-    icon.style.cssText = 'font-size: 1rem;';
-
-    const title = document.createElement('span');
-    title.textContent = 'Cookie Notice';
+    // Title
+    const title = document.createElement('h3');
+    title.textContent = 'Cookie Consent';
     title.style.cssText = `
+      font-weight: 600;
+      color: ${colors.titleColor};
+      font-size: 1.125rem;
+      margin: 0;
+    `;
+
+    // Description
+    const description = document.createElement('p');
+    description.id = 'cookie-consent-description';
+    description.style.cssText = `
+      color: ${colors.textColor};
       font-size: 0.875rem;
-      font-weight: 500;
-      color: #111827;
-    `;
-
-    headerContent.appendChild(icon);
-    headerContent.appendChild(title);
-    header.appendChild(headerContent);
-
-    // Create content area
-    const content = document.createElement('div');
-    content.style.cssText = 'padding: 0.75rem;';
-
-    const text = document.createElement('p');
-    text.textContent = 'We use cookies to enhance your browsing experience.';
-    text.style.cssText = `
-      margin: 0 0 0.75rem 0;
-      font-size: 0.75rem;
       line-height: 1.5;
-      color: #6b7280;
+      margin: 0;
     `;
+    description.innerHTML = `We use cookies to improve your experience and analyze site usage. By clicking "Accept", you agree to our use of cookies for analytics. <a href="https://wheelcube.com/privacy-policy" target="_blank" rel="noopener noreferrer" style="text-decoration: underline; text-underline-offset: 2px; color: ${colors.linkColor}; transition: color 0.2s;">Learn more</a>`;
+
+    textArea.appendChild(title);
+    textArea.appendChild(description);
 
     // Create button container
     const buttonContainer = document.createElement('div');
     buttonContainer.style.cssText = `
-      display: grid;
-      grid-template-columns: 1fr 1fr;
+      display: flex;
+      flex-direction: column;
       gap: 0.5rem;
     `;
 
@@ -220,41 +292,44 @@
     declineBtn.id = 'cookie-decline-btn';
     declineBtn.textContent = 'Decline';
     declineBtn.style.cssText = `
-      background: transparent;
-      color: #6b7280;
-      border: 1px solid #e5e7eb;
       padding: 0.5rem 1rem;
-      border-radius: 0.375rem;
-      cursor: pointer;
       font-size: 0.875rem;
+      border: 1px solid ${colors.declineBorder};
+      color: ${colors.declineColor};
+      border-radius: 0.5rem;
       font-weight: 500;
-      transition: all 0.2s;
+      background: ${colors.declineBg};
+      cursor: pointer;
+      transition: background-color 0.2s;
+      flex: 1;
     `;
 
-    // Accept button
+    // Accept button with gradient
     const acceptBtn = document.createElement('button');
     acceptBtn.id = 'cookie-accept-btn';
     acceptBtn.textContent = 'Accept';
     acceptBtn.style.cssText = `
-      background: #16A34A;
+      padding: 0.5rem 1rem;
+      font-size: 0.875rem;
+      background: linear-gradient(to right, #22c55e, #4ade80);
       color: white;
       border: none;
-      padding: 0.5rem 1rem;
-      border-radius: 0.375rem;
+      border-radius: 0.5rem;
+      font-weight: 600;
       cursor: pointer;
-      font-size: 0.875rem;
-      font-weight: 500;
-      transition: all 0.2s;
+      transition: background-position 600ms ease-in-out, transform 300ms;
+      background-size: 200% 100%;
+      background-position: 0% center;
+      will-change: background-position, transform;
+      flex: 1;
     `;
 
     buttonContainer.appendChild(declineBtn);
     buttonContainer.appendChild(acceptBtn);
 
-    content.appendChild(text);
-    content.appendChild(buttonContainer);
-
-    card.appendChild(header);
-    card.appendChild(content);
+    contentWrapper.appendChild(textArea);
+    contentWrapper.appendChild(buttonContainer);
+    card.appendChild(contentWrapper);
     banner.appendChild(card);
 
     // Add styles for animation and responsive behavior
@@ -272,20 +347,28 @@
       }
 
       #cookie-accept-btn:hover {
-        background: #15803D;
+        background-position: 100% center !important;
       }
 
       #cookie-decline-btn:hover {
-        background: #f9fafb;
+        background-color: ${colors.declineHoverBg} !important;
       }
 
-      /* Responsive: compact card on larger screens */
+      #cookie-consent-description a:hover {
+        color: ${colors.linkHoverColor} !important;
+      }
+
+      /* Responsive: buttons horizontal on larger screens */
       @media (min-width: 640px) {
+        #cookie-consent-banner > div > div > div:last-child {
+          flex-direction: row;
+        }
+
         #cookie-consent-banner {
           left: 1rem;
           bottom: 1rem;
           right: auto;
-          max-width: 300px;
+          max-width: 400px;
           padding: 0;
         }
       }
