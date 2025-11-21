@@ -215,15 +215,48 @@
 
   /**
    * Detects if dark mode is currently active
+   * Checks multiple sources: data attributes, classes, and media queries
    */
   function isDarkMode() {
-    // Check for dark mode class on html or body element
-    if (document.documentElement.classList.contains('dark') ||
-        document.body.classList.contains('dark')) {
+    // Check for dark mode via data-theme attribute (common in Mintlify)
+    const htmlElement = document.documentElement;
+    const bodyElement = document.body;
+
+    // Check data-theme attribute
+    if (htmlElement.getAttribute('data-theme') === 'dark' ||
+        bodyElement.getAttribute('data-theme') === 'dark') {
       return true;
     }
 
-    // Check for dark mode using media query
+    // Check for dark mode class on html or body element
+    if (htmlElement.classList.contains('dark') ||
+        bodyElement.classList.contains('dark')) {
+      return true;
+    }
+
+    // Check for Mintlify-specific dark mode indicator
+    const isDarkClass = htmlElement.className.includes('dark') ||
+                        bodyElement.className.includes('dark');
+    if (isDarkClass) {
+      return true;
+    }
+
+    // Check computed background color as last resort
+    const bgColor = window.getComputedStyle(htmlElement).backgroundColor;
+    if (bgColor) {
+      // Parse RGB values
+      const match = bgColor.match(/\d+/g);
+      if (match) {
+        const [r, g, b] = match.map(Number);
+        // If background is dark (low RGB values), assume dark mode
+        const brightness = (r + g + b) / 3;
+        if (brightness < 128) {
+          return true;
+        }
+      }
+    }
+
+    // Fallback to system preference
     if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
       return true;
     }
@@ -232,13 +265,10 @@
   }
 
   /**
-   * Creates and shows the cookie consent banner
+   * Gets color scheme based on current theme
    */
-  function showConsentBanner() {
-    const darkMode = isDarkMode();
-
-    // Define color schemes (matching shadcn/ui design system)
-    const colors = darkMode ? {
+  function getColorScheme(darkMode) {
+    return darkMode ? {
       cardBg: 'rgba(9, 9, 11, 0.95)',  // bg-card/95 with backdrop blur effect
       cardBorder: '#27272a',
       titleColor: '#fafafa',
@@ -261,6 +291,85 @@
       declineColor: '#09090b',
       declineHoverBg: '#f4f4f5'  // hover:bg-accent
     };
+  }
+
+  /**
+   * Updates banner theme dynamically
+   */
+  function updateBannerTheme(card, title, description, declineBtn, styleElement) {
+    const darkMode = isDarkMode();
+    const colors = getColorScheme(darkMode);
+
+    // Update card styles
+    card.style.background = colors.cardBg;
+    card.style.borderColor = colors.cardBorder;
+    card.style.boxShadow = `0 10px 15px -3px rgba(0, 0, 0, ${darkMode ? '0.3' : '0.1'}), 0 4px 6px -2px rgba(0, 0, 0, ${darkMode ? '0.2' : '0.05'})`;
+
+    // Update text colors
+    title.style.color = colors.titleColor;
+    description.style.color = colors.textColor;
+
+    // Update link color
+    const link = description.querySelector('a');
+    if (link) {
+      link.style.color = colors.linkColor;
+    }
+
+    // Update decline button
+    declineBtn.style.background = colors.declineBg;
+    declineBtn.style.borderColor = colors.declineBorder;
+    declineBtn.style.color = colors.declineColor;
+
+    // Update hover styles
+    styleElement.textContent = `
+      @keyframes slideUp {
+        from {
+          opacity: 0;
+          transform: translateY(100%);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      #cookie-accept-btn:hover {
+        background-position: 100% center !important;
+      }
+
+      #cookie-decline-btn:hover {
+        background-color: ${colors.declineHoverBg} !important;
+      }
+
+      #cookie-consent-description a:hover {
+        color: ${colors.linkHoverColor} !important;
+      }
+
+      /* Responsive: buttons horizontal on larger screens */
+      @media (min-width: 640px) {
+        #cookie-consent-banner > div > div > div:last-child {
+          flex-direction: row;
+        }
+
+        #cookie-consent-banner {
+          left: 1rem;
+          bottom: 1rem;
+          right: auto;
+          max-width: 400px;
+          padding: 0;
+        }
+      }
+    `;
+
+    console.log('Banner theme updated:', darkMode ? 'dark' : 'light');
+  }
+
+  /**
+   * Creates and shows the cookie consent banner
+   */
+  function showConsentBanner() {
+    const darkMode = isDarkMode();
+    const colors = getColorScheme(darkMode);
 
     // Create banner container
     const banner = document.createElement('div');
@@ -428,8 +537,32 @@
 
     document.body.appendChild(banner);
 
+    // Watch for theme changes and update banner dynamically
+    const observer = new MutationObserver(function(mutations) {
+      mutations.forEach(function(mutation) {
+        if (mutation.type === 'attributes' &&
+            (mutation.attributeName === 'class' ||
+             mutation.attributeName === 'data-theme' ||
+             mutation.attributeName === 'style')) {
+          updateBannerTheme(card, title, description, declineBtn, style);
+        }
+      });
+    });
+
+    // Observe changes to html and body elements
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['class', 'data-theme', 'style']
+    });
+
+    observer.observe(document.body, {
+      attributes: true,
+      attributeFilter: ['class', 'data-theme', 'style']
+    });
+
     // Handle accept button
     acceptBtn.addEventListener('click', function() {
+      observer.disconnect(); // Stop observing when banner is dismissed
       setConsentStatus(CONSENT_VALUE_GRANTED);
       banner.style.animation = 'slideUp 0.3s ease-in reverse';
       setTimeout(() => banner.remove(), 300);
@@ -437,6 +570,7 @@
 
     // Handle decline button
     declineBtn.addEventListener('click', function() {
+      observer.disconnect(); // Stop observing when banner is dismissed
       setConsentStatus(CONSENT_VALUE_DECLINED);
       banner.style.animation = 'slideUp 0.3s ease-in reverse';
       setTimeout(() => banner.remove(), 300);
