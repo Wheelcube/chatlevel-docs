@@ -165,9 +165,54 @@
   }
 
   /**
+   * Detects if dark mode is currently active
+   */
+  function isDarkMode() {
+    // Check for dark mode class on html or body element
+    if (document.documentElement.classList.contains('dark') ||
+        document.body.classList.contains('dark')) {
+      return true;
+    }
+
+    // Check for dark mode using media query
+    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      return true;
+    }
+
+    return false;
+  }
+
+  /**
    * Creates and shows the cookie consent banner
    */
   function showConsentBanner() {
+    const darkMode = isDarkMode();
+
+    // Define color schemes
+    const colors = darkMode ? {
+      cardBg: '#1f2937',
+      cardBorder: '#374151',
+      titleColor: '#f9fafb',
+      textColor: '#d1d5db',
+      linkColor: '#9ca3af',
+      linkHoverColor: '#f9fafb',
+      declineBg: 'transparent',
+      declineBorder: '#4b5563',
+      declineColor: '#d1d5db',
+      declineHoverBg: '#374151'
+    } : {
+      cardBg: 'white',
+      cardBorder: '#e5e5e5',
+      titleColor: '#111827',
+      textColor: '#4b5563',
+      linkColor: '#4b5563',
+      linkHoverColor: '#111827',
+      declineBg: 'white',
+      declineBorder: '#d1d5db',
+      declineColor: '#374151',
+      declineHoverBg: '#f9fafb'
+    };
+
     // Create banner container
     const banner = document.createElement('div');
     banner.id = 'cookie-consent-banner';
@@ -185,10 +230,10 @@
     // Create card
     const card = document.createElement('div');
     card.style.cssText = `
-      background: white;
-      border: 1px solid #e5e5e5;
+      background: ${colors.cardBg};
+      border: 1px solid ${colors.cardBorder};
       border-radius: 0.5rem;
-      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, ${darkMode ? '0.3' : '0.1'}), 0 4px 6px -2px rgba(0, 0, 0, ${darkMode ? '0.2' : '0.05'});
       padding: 1.5rem;
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
     `;
@@ -215,20 +260,21 @@
     title.textContent = 'Cookie Consent';
     title.style.cssText = `
       font-weight: 600;
-      color: #111827;
+      color: ${colors.titleColor};
       font-size: 1.125rem;
       margin: 0;
     `;
 
     // Description
     const description = document.createElement('p');
+    description.id = 'cookie-consent-description';
     description.style.cssText = `
-      color: #4b5563;
+      color: ${colors.textColor};
       font-size: 0.875rem;
       line-height: 1.5;
       margin: 0;
     `;
-    description.innerHTML = `We use cookies to improve your experience and analyze site usage. By clicking "Accept", you agree to our use of cookies for analytics. <a href="https://wheelcube.com/privacy-policy" target="_blank" rel="noopener noreferrer" style="text-decoration: underline; text-underline-offset: 2px; color: #4b5563; transition: color 0.2s;">Learn more</a>`;
+    description.innerHTML = `We use cookies to improve your experience and analyze site usage. By clicking "Accept", you agree to our use of cookies for analytics. <a href="https://wheelcube.com/privacy-policy" target="_blank" rel="noopener noreferrer" style="text-decoration: underline; text-underline-offset: 2px; color: ${colors.linkColor}; transition: color 0.2s;">Learn more</a>`;
 
     textArea.appendChild(title);
     textArea.appendChild(description);
@@ -248,11 +294,11 @@
     declineBtn.style.cssText = `
       padding: 0.5rem 1rem;
       font-size: 0.875rem;
-      border: 1px solid #d1d5db;
-      color: #374151;
+      border: 1px solid ${colors.declineBorder};
+      color: ${colors.declineColor};
       border-radius: 0.5rem;
       font-weight: 500;
-      background: white;
+      background: ${colors.declineBg};
       cursor: pointer;
       transition: background-color 0.2s;
       flex: 1;
@@ -305,11 +351,11 @@
       }
 
       #cookie-decline-btn:hover {
-        background-color: #f9fafb;
+        background-color: ${colors.declineHoverBg} !important;
       }
 
       #cookie-consent-description a:hover {
-        color: #111827 !important;
+        color: ${colors.linkHoverColor} !important;
       }
 
       /* Responsive: buttons horizontal on larger screens */
