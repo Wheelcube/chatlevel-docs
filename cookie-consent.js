@@ -70,11 +70,33 @@
   }
 
   /**
-   * Sets consent status in localStorage
+   * Sets a cookie with domain-level scope
+   */
+  function setCookie(name, value, days) {
+    try {
+      const date = new Date();
+      date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+      const expires = `expires=${date.toUTCString()}`;
+
+      // Set cookie for entire .chatlevel.io domain
+      document.cookie = `${name}=${value};${expires};domain=${COOKIE_DOMAIN};path=/;SameSite=Lax`;
+      console.log(`Cookie set: ${name}=${value} for domain ${COOKIE_DOMAIN}`);
+    } catch (e) {
+      console.error('Failed to set cookie:', e);
+    }
+  }
+
+  /**
+   * Sets consent status in both localStorage and cookie
    */
   function setConsentStatus(value) {
     try {
+      // Store in localStorage for quick access
       localStorage.setItem(CONSENT_KEY, value);
+
+      // Store in cookie for domain-level sharing (365 days)
+      setCookie(CONSENT_KEY, value, 365);
+
       console.log('Cookie consent set to:', value);
 
       // Initialize PostHog if consent is granted
