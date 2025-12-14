@@ -703,11 +703,20 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["toNumber", "message"],
+                  "required": ["message"],
+                  "oneOf": [
+                    { "required": ["to"] },
+                    { "required": ["toNumber"] }
+                  ],
                   "properties": {
+                    "to": {
+                      "type": "string",
+                      "description": "Full WhatsApp JID. Use for LIDs (e.g., '138087493537914@lid'), groups (e.g., '123456789-987654@g.us'), or full phone JIDs (e.g., '31612345678@s.whatsapp.net'). Mutually exclusive with toNumber.",
+                      "example": "123456789-987654@g.us"
+                    },
                     "toNumber": {
                       "type": "string",
-                      "description": "WhatsApp phone number (digits only)",
+                      "description": "WhatsApp phone number (digits only, 8-15 digits). Will be formatted as phone@s.whatsapp.net. Mutually exclusive with 'to'.",
                       "example": "31620292537"
                     },
                     "message": {
@@ -830,11 +839,19 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": ["toNumber"],
+                  "oneOf": [
+                    { "required": ["to"] },
+                    { "required": ["toNumber"] }
+                  ],
                   "properties": {
+                    "to": {
+                      "type": "string",
+                      "description": "Full WhatsApp JID. Use for LIDs (e.g., '138087493537914@lid'), groups (e.g., '123456789-987654@g.us'), or full phone JIDs (e.g., '31612345678@s.whatsapp.net'). Mutually exclusive with toNumber.",
+                      "example": "123456789-987654@g.us"
+                    },
                     "toNumber": {
                       "type": "string",
-                      "description": "WhatsApp phone number (digits only)",
+                      "description": "WhatsApp phone number (digits only, 8-15 digits). Will be formatted as phone@s.whatsapp.net. Mutually exclusive with 'to'.",
                       "example": "31620292537"
                     },
                     "mediaUrl": {
