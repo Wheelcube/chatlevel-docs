@@ -3,6 +3,25 @@ title: "Introduction"
 description: "Use webhooks to notify your application about WhatsApp events"
 ---
 
+## Understanding LIDs (Linked IDs)
+
+WhatsApp has introduced LIDs (Linked IDs) as privacy-focused identifiers that replace phone numbers in many contexts. Unlike phone numbers, LIDs are pseudonymous identifiers that remain consistent for a contact but don't reveal their actual phone number.
+
+### What this means for webhooks
+
+Our webhook events include both identifiers when available:
+
+| Field                 | Type           | Description                                                             |
+| --------------------- | -------------- | ----------------------------------------------------------------------- |
+| `from` / `to`         | string         | The best available identifier (phone number preferred, LID as fallback) |
+| `fromType` / `toType` | string         | Either `pn` (phone number) or `lid`                                     |
+| `phoneNumber`         | string \| null | The phone number when WhatsApp provides it                              |
+| `lid`                 | string \| null | The LID when the contact uses this format                               |
+
+<Info>
+  When you receive both `lid` and `phoneNumber` together, we recommend storing this mapping for future reference. This allows you to match contacts in external systems where only a phone number is available, even when only the LID is provided in the received event.
+</Info>
+
 ## What is a webhook?
 
 We use webhooks to push real-time notifications to you about your WhatsApp devices. All webhooks use HTTPS and deliver a JSON payload that can be used by your application. You can use webhook feeds to do things like:

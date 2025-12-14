@@ -107,6 +107,9 @@ A new message was received by the WhatsApp instance.
       "data": {
         "id": "3EB0C7F8A5B2D4E6F9A1C3D5",
         "from": "1234567890",
+    	"fromType": "pn | lid",
+    	"lid": "138087493537914" || null, 
+    	"phoneNumber": "1234567890" || null,
         "pushName": "John Doe",
         "content": {
           "text": "Hello world"
@@ -132,6 +135,9 @@ A message was sent from the WhatsApp device.
       "data": {
         "id": "3EB0C7F8A5B2D4E6F9A1C3D6",
         "to": "0987654321",
+    	"toType": "pn | lid",
+    	"lid": "138087493537914" || null,
+    	"phoneNumber": "1234567890" || null,
         "content": {
           "text": "Thanks for reaching out!"
         },
@@ -156,6 +162,9 @@ A message was edited.
       "data": {
         "messageId": "3EB0C7F8A5B2D4E6F9A1C3D6",
         "from": "0987654321",
+      	"fromType": "pn | lid",
+    	"lid": "138087493537914" || null,
+    	"phoneNumber": "1234567890" || null,
         "fromMe": true,
         "update": {
           "editedContent": {
@@ -183,6 +192,9 @@ A message was deleted.
       "data": {
         "messageId": "3EB0C7F8A5B2D4E6F9A1C3D6",
         "from": "0987654321",
+    	"fromType": "pn | lid",
+    	"lid": "138087493537914" || null,
+    	"phoneNumber": "1234567890" || null,
         "fromMe": false
       },
       "timestamp": "2025-10-22T21:55:44.332Z"
@@ -193,7 +205,7 @@ A message was deleted.
 
 ## call
 
-A whatsapp call was received, accepted, rejected or timed out
+A whatsapp call was received, accepted, rejected or timed out. Will almost always come with lid.
 
 <AccordionGroup>
   <Accordion title="Sample Request Body">
@@ -203,7 +215,10 @@ A whatsapp call was received, accepted, rejected or timed out
       "deviceId": 1234567,
       "data": {
         "id": "string",
-        "from": "1234567890",
+        "from": "138087493537914",
+    	"fromType": "lid",
+    	"lid": "138087493537914",
+    	"phoneNumber": null,
         "status": "offer | accept | timeout | reject",
         "isVideo": true,
         "isGroup": false,
