@@ -40,8 +40,8 @@ Within **Typebot**, follow the below steps to obtain your **Start Chat URL**:
 2. Click **Share** _(see screenshot below)_
 
    <img
-     src="/images/Screenshot2026-01-01at4.03.45PM.png"
-     alt="Screenshot"
+     src="/images/Screenshot_share.png"
+     alt="Screenshot Share"
      title="Screenshot"
      style={{ width:"43%" }}
    />
@@ -49,8 +49,8 @@ Within **Typebot**, follow the below steps to obtain your **Start Chat URL**:
 4. Copy the **Start Chat URL** _(see screenshot below)_
 
    <img
-     src="/images/Screenshot2026-01-01at4.05.27PM.png"
-     alt="Screenshot"
+     src="/images/Screenshot_startchat.png"
+     alt="Screenshot Start Chat"
      title="Screenshot"
      style={{ width:"37%" }}
    />
@@ -69,10 +69,14 @@ Within **Chatlevel**, follow the below steps to set up the **Typebot integration
 4. Assign a **name** to your Typebot integration
 5. Insert the **Start Chat URL** _(see section 2)_
 6. Under **Authorization**, add the **API Key** (see section 1)\
-   \<Note\>Ensure that you include the full API Key including Bearer, i.e. _Bearer xxxxyyyyzzzz_\</Note\>
-7. Set the **maximum duration** of a session\
-   \<Note\>Chatlevel ends sessions automatically based on Typebot's API response, but if users don't finish the full Chatflow, the session will end automatically after this duration.\</Note\>
-8. Click **Create**
+   <Note>
+   Ensure that you include the full API Key including Bearer, i.e. _Bearer xxxxyyyyzzzz_
+   </Note>
+8. Set the **maximum duration** of a session\
+   <Note>
+   Chatlevel ends sessions automatically based on Typebot's API response, but if users don't finish the full Chatflow, the session will end automatically after this duration.
+   </Note>
+9. Click **Create**
 
 Your Typebot integration is now set up. You will now need to link it to one of your devices.
 
@@ -86,9 +90,9 @@ Within **Chatlevel**, follow the below steps to link your **Typebot integration*
 2. For the device you want to link, click the **Integration dropdown** _(see screenshot below)_
 
    <img
-     src="/images/Screenshot2026-01-01at4.23.22PM.png"
-     alt="Screenshot 2026 01 01 At 4 23 22 PM"
-     title="Screenshot 2026 01 01 At 4 23 22 PM"
+     src="/images/Screenshot_integrationdropdown.png"
+     alt="Screenshot Integration Dropdown"
+     title="Screenshot"
      style={{ width:"40%" }}
    />
 3. Select the **Typebot integration** you set up _(see section 3)_
@@ -100,8 +104,11 @@ You have now linked your Typebot chatflow to Chatlevel.
 
 When using Typebot in combination with Chatlevel, a few things should be noted.
 
-1. Chatlevel's Typebot integration currently only supports sending**text**  **messages**. Images or other non-text messages will not be processed. We are introducing support for more message types soon.
-2. Since Chatlevel allows you to integrate with normal WhatsApp accounts instead of WhatsApp Business Accounts, things like buttons are not available and will not work with Chatlevel. Normal WhatsApp accounts only support plain messages and media.\
-   \<Tip\>If your Typebot Chatflow requires a user to pick out of multiple options, number them with 1) 2) 3) etc. and ask the user to respond with one of these numbers. You can then use [Typebot Conditions](https://docs.typebot.io/editor/blocks/logic/condition) to check which option the user selected.\</Tip\>
+1. Chatlevel's Typebot integration currently only supports sending **text**  **messages**. Images or other non-text messages will not be processed. We are introducing support for more message types soon.
+2. Since Chatlevel allows you to integrate with normal WhatsApp accounts instead of WhatsApp Business Accounts, things like buttons are not available and will not work with Chatlevel. Normal WhatsApp accounts only support plain messages and media.\\
+
+   <Tip>
+     If your Typebot Chatflow requires a user to pick out of multiple options, number them with 1) 2) 3) etc. and ask the user to respond with one of these numbers. You can then use [Typebot Conditions](https://docs.typebot.io/editor/blocks/logic/condition) to check which option the user selected.
+   </Tip>
 
 For an example of how to build a Typebot Chatflow supported by Chatlevel, take a look at this [Chatflow Example](https://app.typebot.io/typebots/cmjsqtbus0002jj04s2mpmd4e/edit).
